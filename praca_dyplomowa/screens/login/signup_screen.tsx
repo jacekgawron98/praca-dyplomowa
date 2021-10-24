@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#232323",
     },
     
     logoText: {
