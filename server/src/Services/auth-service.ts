@@ -36,7 +36,8 @@ const postRegister = (req: Request, res: Response) => {
 
 const authenticate = async (email: string, password: string): Promise<AuthResult> => {
     const collection = await getCollection<UserDbModel>(collectionName);
-    const account = await collection.findOne({email});
+    const login = email.toLowerCase();
+    const account = await collection.findOne({login});
     if (!account || !bcrypt.compare(password, account.password)) {
         return null;
     }
@@ -49,9 +50,10 @@ const authenticate = async (email: string, password: string): Promise<AuthResult
 
 const register = async (email: string, password: string): Promise<AuthResult> => {
     const collection = await getCollection<UserDbModel>(collectionName);
-    if (await collection.findOne({email})) return null;
+    const login = email.toLowerCase();
+    if (await collection.findOne({login})) return null;
     const account: UserDbModel = {
-        login: email,
+        login,
         password
     }
     account.password = bcrypt.hashSync(password, 10);

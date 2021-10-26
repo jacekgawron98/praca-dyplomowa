@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Dimensions, Pressable, ActivityIndicator } from "react-native";
 import { DARK_COLOR, defaultStyles, PLACEHOLDER_COLOR } from "../../common/default_styles";
 import { AuthContext } from "../../contexts/auth-context";
@@ -45,6 +45,13 @@ export default function SignInScreen({ navigation }: any) {
         const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return email? EMAIL_REGEX.test(email) : false;
     }
+
+    useEffect(() => {
+        const resetError = navigation.addListener('blur', () =>{
+            authContext.resetError();
+        })
+        return resetError;
+    },[navigation])
 
     return (
         <View style={styles.container}>

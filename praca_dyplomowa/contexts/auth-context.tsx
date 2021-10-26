@@ -8,7 +8,8 @@ type AuthContextModel = {
     loading?: boolean,
     signin?: any,
     signup?: any,
-    signout?: any
+    signout?: any,
+    resetError?: any
 }
 
 export const getErrorMessage = (errorCode: number): string => {
@@ -18,10 +19,13 @@ export const getErrorMessage = (errorCode: number): string => {
             return "Invalid login or password";
         }
         case 408: {
-            return "Unable to connect to the server"
+            return "Unable to connect to the server";
+        }
+        case 409: {
+            return "This email has already been used";
         }
     }
-    return "An error has occurred"
+    return "An error has occurred";
 }
 
 export const AuthContext = React.createContext<AuthContextModel>({});
@@ -35,6 +39,10 @@ export const AuthProvider = ({ children }: any) => {
     const signup = (email: string, password: string) => {
         setLoading(true);
         SignUp(email,password).then( auth => {
+            if (auth === undefined) {
+                setError('Unhandled sign up error');
+                return;
+            }
             setCurrentUser(auth.account);
             setCurrentToken(auth.token);
         }).catch((error: number) => {
@@ -65,6 +73,10 @@ export const AuthProvider = ({ children }: any) => {
         setCurrentToken(undefined);
     }
 
+    const resetError = () => {
+        setError("");
+    }
+
     const value = {
         account: currentUser,
         token: currentToken,
@@ -73,6 +85,7 @@ export const AuthProvider = ({ children }: any) => {
         signup,
         signin,
         signout,
+        resetError
     }
 
     return(
