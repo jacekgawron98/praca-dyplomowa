@@ -5,18 +5,16 @@ import { AuthContext } from "../../contexts/auth-context";
 import { isStringEmpty } from "../../helpers/string-helper";
 import { AUTH_STACK_ROUTES } from "../../routes/auth-stack";
 
-export default function SignUpScreen({ navigation } : any) {
+export default function SignInScreen({ navigation }: any) {
     const [login, setLogin] = useState<string>();
     const [password, setPassword] = useState<string>();
-    const [repeatPassword, setRepeatPassword] = useState<string>();
 
     const [loginError, setLoginError] = useState<boolean>(false);
     const [passwordError, setPasswordError] = useState<boolean>(false);
-    const [repeatPasswordError, setRepeatPasswordError] = useState<boolean>(false);
 
     const authContext = useContext(AuthContext)
 
-    const onSignupPressed = () => {
+    const onSigninPressed = () => {
         let error = false;
         if (!validateEmail(login)) {
             setLoginError(true)
@@ -28,21 +26,19 @@ export default function SignUpScreen({ navigation } : any) {
             error = true;
         }
 
-        if (!repeatPassword || repeatPassword !== password) {
-            setRepeatPasswordError(true);
-            error = true;
-        }
-
         if (error) {
             return;
         }
 
-        authContext.signup(login,password);
+        authContext.signin(login,password);
     }
 
-    const onExistClicked = () => {
-        console.log("New");
-        navigation.push(AUTH_STACK_ROUTES.signinRoute)
+    const onForgotClicked = () => {
+        console.log("Forgot");
+    }
+
+    const onNewClicked = () => {
+        navigation.push(AUTH_STACK_ROUTES.signupRoute);
     }
 
     const validateEmail = (email: string | undefined): boolean => {
@@ -57,7 +53,7 @@ export default function SignUpScreen({ navigation } : any) {
                     Practice Assistant
                 </Text>
                 <Text style={[styles.mainText, defaultStyles.standardText]}>
-                    Create new account
+                    Welcome back!
                 </Text>
             </View>
             {
@@ -82,27 +78,22 @@ export default function SignUpScreen({ navigation } : any) {
                     style={defaultStyles.textInput}/>
                 {passwordError && <Text style={defaultStyles.alertText}>Password cannot be empty</Text>}
             </View>
-            <View style={defaultStyles.inputView}>
-                <TextInput value={repeatPassword} 
-                    onChangeText={text => {setRepeatPassword(text);setRepeatPasswordError(false)}}
-                    placeholder="Repeat password"
-                    placeholderTextColor={PLACEHOLDER_COLOR}
-                    secureTextEntry={true}
-                    style={defaultStyles.textInput}/>
-                {repeatPasswordError && <Text style={defaultStyles.alertText}>Passwords do not match</Text>}
-            </View>
             {
-                !authContext.loading && <Pressable onPress={onSignupPressed}
+                !authContext.loading && <Pressable onPress={onSigninPressed}
                     style={defaultStyles.standardButton}>
-                    <Text style={defaultStyles.buttonText}>Sign Up</Text>
+                    <Text style={defaultStyles.buttonText}>Sign In</Text>
                 </Pressable>
             }
             {
                 authContext.loading && <ActivityIndicator size="large" color={DARK_COLOR}/>
             }
-            <Pressable onPress={onExistClicked}
+            <Pressable onPress={onNewClicked}
                 style={defaultStyles.linkButton}>
-                <Text style={defaultStyles.linkButtonText}>I already have an account</Text>
+                <Text style={defaultStyles.linkButtonText}>Create new account</Text>
+            </Pressable>
+            <Pressable onPress={onForgotClicked}
+                style={defaultStyles.linkButton}>
+                <Text style={defaultStyles.linkButtonText}>Forgot your password?</Text>
             </Pressable>
         </View>
     );

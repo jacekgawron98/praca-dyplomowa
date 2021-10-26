@@ -3,7 +3,7 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import AuthProvider from './contexts/auth-context';
 import { Router } from './routes/router';
-import SignUpScreen from './screens/login/signup_screen';
+import SignInScreen from './screens/login/signin_screen';
 
 export default function App() {
   return (
