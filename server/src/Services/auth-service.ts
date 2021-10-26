@@ -13,8 +13,8 @@ type AuthResult = {
 }
 
 const postAuthenticate = (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    authenticate(email, password).then((account) => {
+    const { login, password } = req.body;
+    authenticate(login, password).then((account) => {
         if (!account) {
             res.status(401).send('Invalid login or password');
             return;
