@@ -1,6 +1,7 @@
 import express from 'express';
 import expressJwt from 'express-jwt';
 import config from './config';
+import cors from 'cors';
 import { connectToDatabase } from './Helpers/database';
 import { authRouter } from './Services/auth-service';
 import { practiceRouter } from './Services/practice-service';
@@ -13,6 +14,7 @@ const checkIfAuthenticated = expressJwt({
 })
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use("/api", authRouter)

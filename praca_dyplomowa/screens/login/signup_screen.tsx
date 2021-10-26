@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Dimensions, Pressable } from "react-native";
-import { defaultStyles, PLACEHOLDER_COLOR } from "../../common/default_styles";
-import { margin, padding } from "../../helpers/style_helper"
+import React, { useContext, useState } from "react";
+import { View, Text, TextInput, Button, StyleSheet, Dimensions, Pressable, ActivityIndicator } from "react-native";
+import { DARK_COLOR, defaultStyles, PLACEHOLDER_COLOR } from "../../common/default_styles";
+import { AuthContext } from "../../contexts/auth-context";
+import { isStringEmpty } from "../../helpers/string-helper";
 
 export default function SignUpScreen() {
     const [login, setLogin] = useState<string>();
@@ -9,6 +10,8 @@ export default function SignUpScreen() {
 
     const [loginError, setLoginError] = useState<boolean>(false);
     const [passwordError, setPasswordError] = useState<boolean>(false);
+
+    const authContext = useContext(AuthContext)
 
     const onSigninPressed = () => {
         let error = false;
@@ -26,7 +29,7 @@ export default function SignUpScreen() {
             return;
         }
 
-        console.log(`l: ${login}, h: ${password}`);
+        authContext.signin(login,password);
     }
 
     const onForgotClicked = () => {
@@ -52,6 +55,11 @@ export default function SignUpScreen() {
                     Welcome back!
                 </Text>
             </View>
+            {
+                !isStringEmpty(authContext.error) && <View>
+                    <Text>{authContext.error}</Text>
+                </View>
+            }
             <View style={defaultStyles.inputView}>
                 <TextInput value={login} 
                     onChangeText={text => {setLogin(text); setLoginError(false)}} 
@@ -69,10 +77,15 @@ export default function SignUpScreen() {
                     style={defaultStyles.textInput}/>
                 {passwordError && <Text style={defaultStyles.alertText}>Password cannot be empty</Text>}
             </View>
-            <Pressable onPress={onSigninPressed}
-                style={defaultStyles.standardButton}>
-                <Text style={defaultStyles.buttonText}>Sign In</Text>
-            </Pressable>
+            {
+                !authContext.loading && <Pressable onPress={onSigninPressed}
+                    style={defaultStyles.standardButton}>
+                    <Text style={defaultStyles.buttonText}>Sign In</Text>
+                </Pressable>
+            }
+            {
+                authContext.loading && <ActivityIndicator size="large" color={DARK_COLOR}/>
+            }
             <Pressable onPress={onNewClicked}
                 style={defaultStyles.linkButton}>
                 <Text style={defaultStyles.linkButtonText}>Create new account</Text>
@@ -87,8 +100,9 @@ export default function SignUpScreen() {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: "#232323",
         display: "flex",
-        height: Dimensions.get('window').height,
+        height: Dimensions.get('window').height + 100,
         justifyContent: "center",
         alignItems: "center",
     },
