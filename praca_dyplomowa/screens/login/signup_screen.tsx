@@ -57,7 +57,7 @@ export default function SignUpScreen() {
             </View>
             {
                 !isStringEmpty(authContext.error) && <View>
-                    <Text>{authContext.error}</Text>
+                    <Text style={defaultStyles.alertText}>{authContext.error}</Text>
                 </View>
             }
             <View style={defaultStyles.inputView}>

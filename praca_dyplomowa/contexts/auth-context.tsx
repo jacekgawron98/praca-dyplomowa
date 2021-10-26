@@ -11,6 +11,19 @@ type AuthContextModel = {
     signout?: any
 }
 
+export const getErrorMessage = (errorCode: number): string => {
+    console.log(`${errorCode}`);
+    switch (errorCode){
+        case 401: {
+            return "Invalid login or password";
+        }
+        case 408: {
+            return "Unable to connect to the server"
+        }
+    }
+    return "An error has occurred"
+}
+
 export const AuthContext = React.createContext<AuthContextModel>({});
 
 export const AuthProvider = ({ children }: any) => {
@@ -24,9 +37,8 @@ export const AuthProvider = ({ children }: any) => {
         SignUp(email,password).then( auth => {
             setCurrentUser(auth.account);
             setCurrentToken(auth.token);
-        }).catch((error: string) => {
-            console.log(error);
-            setError("An sign up error has occured");
+        }).catch((error: number) => {
+            setError(getErrorMessage(error));
         }).finally( ()=> {
             setLoading(false)
         });
@@ -36,13 +48,13 @@ export const AuthProvider = ({ children }: any) => {
         setLoading(true);
         SignIn(email,password).then( auth => {
             if (auth === undefined) {
-                throw new Error("Some error");
+                setError('Unhandled sign in error');
+                return;
             }
             setCurrentUser(auth.account);
             setCurrentToken(auth.token);
         }).catch( error => {
-            console.log(error);
-            setError("An sign in error has occured");
+            setError(getErrorMessage(error));
         }).finally( ()=> {
             setLoading(false)
         });
