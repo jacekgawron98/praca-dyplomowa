@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SignIn, SignUp } from "../services/auth-service";
+import jwtDecode from "jwt-decode";
 
 type AuthContextModel = {
     account?: User,
@@ -10,11 +11,11 @@ type AuthContextModel = {
     signin?: any,
     signup?: any,
     signout?: any,
-    resetError?: any
+    resetError?: any,
+    validateToken?: any
 }
 
 export const getErrorMessage = (errorCode: number): string => {
-    console.log(`${errorCode}`);
     switch (errorCode){
         case 401: {
             return "Invalid login or password";
@@ -46,8 +47,12 @@ export const AuthProvider = ({ children }: any) => {
             const authDataSerialized = await AsyncStorage.getItem('@AuthData');
             if (authDataSerialized) {
                 const _authData: AuthModel = JSON.parse(authDataSerialized);
-                setCurrentUser(_authData.account);
-                setCurrentToken(_authData.token);
+                if (validateToken(_authData.token)) {
+                    setCurrentUser(_authData.account);
+                    setCurrentToken(_authData.token);
+                } else {
+                    await signout();
+                }
             }
         } catch (error) {
         }finally {
@@ -98,9 +103,18 @@ export const AuthProvider = ({ children }: any) => {
     }
 
     const signout = async () => {
+        await AsyncStorage.removeItem('@AuthData');
         setCurrentUser(undefined);
         setCurrentToken(undefined);
-        await AsyncStorage.removeItem('@AuthData');
+    }
+
+    const validateToken = (token: string): boolean => {
+        const { exp }:any = jwtDecode(token);
+        const expirationTime = (exp * 1000) - 60000;
+        if (Date.now() >= expirationTime) {
+            return false;
+        }
+        return true;
     }
 
     const resetError = () => {
@@ -115,7 +129,8 @@ export const AuthProvider = ({ children }: any) => {
         signup,
         signin,
         signout,
-        resetError
+        resetError,
+        validateToken
     }
 
     return(
