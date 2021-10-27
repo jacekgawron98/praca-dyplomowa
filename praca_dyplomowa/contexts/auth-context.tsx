@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SignIn, SignUp } from "../services/auth-service";
 
 type AuthContextModel = {
@@ -36,6 +37,24 @@ export const AuthProvider = ({ children }: any) => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState<boolean>(false);
 
+    useEffect(() => {
+        loadStorageData();
+    })
+
+    const loadStorageData = async (): Promise<void> => {
+        try {
+            const authDataSerialized = await AsyncStorage.getItem('@AuthData');
+            if (authDataSerialized) {
+                const _authData: AuthModel = JSON.parse(authDataSerialized);
+                setCurrentUser(_authData.account);
+                setCurrentToken(_authData.token);
+            }
+        } catch (error) {
+        }finally {
+            setLoading(false);
+        }
+    }
+
     const signup = (email: string, password: string) => {
         setLoading(true);
         SignUp(email,password).then( auth => {
@@ -45,6 +64,11 @@ export const AuthProvider = ({ children }: any) => {
             }
             setCurrentUser(auth.account);
             setCurrentToken(auth.token);
+            const data: AuthModel = {
+                account: auth.account,
+                token: auth.token
+            }
+            AsyncStorage.setItem('@AuthData', JSON.stringify(data));
         }).catch((error: number) => {
             setError(getErrorMessage(error));
         }).finally( ()=> {
@@ -61,6 +85,11 @@ export const AuthProvider = ({ children }: any) => {
             }
             setCurrentUser(auth.account);
             setCurrentToken(auth.token);
+            const data: AuthModel = {
+                account: auth.account,
+                token: auth.token
+            }
+            AsyncStorage.setItem('@AuthData', JSON.stringify(data));
         }).catch( error => {
             setError(getErrorMessage(error));
         }).finally( ()=> {
@@ -68,9 +97,10 @@ export const AuthProvider = ({ children }: any) => {
         });
     }
 
-    const signout = () => {
+    const signout = async () => {
         setCurrentUser(undefined);
         setCurrentToken(undefined);
+        await AsyncStorage.removeItem('@AuthData');
     }
 
     const resetError = () => {
