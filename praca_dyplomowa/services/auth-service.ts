@@ -7,7 +7,8 @@ export const SignIn = async (login: string, password: string): Promise<AuthModel
     }
     let result;
     try {
-        result = await fetch('http://192.168.1.2:5000/api/login', request)
+        console.log(process.env.API_ADDRESS);
+        result = await fetch(`${process.env.API_ADDRESS}/login`, request)
     } catch {
         throw 408;
     }
@@ -32,7 +33,7 @@ export const SignUp = async (login: string, password: string): Promise<AuthModel
     }
     let result;
     try {
-        result = await fetch('http://192.168.1.2:5000/api/register', request)
+        result = await fetch(`${process.env.API_ADDRESS}/register`, request)
     } catch {
         throw 408;
     }
