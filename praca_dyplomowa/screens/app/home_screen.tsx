@@ -1,12 +1,13 @@
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { CalendarScreen } from "./calendar_screen";
 import { ItemsScreen } from "./items_screen";
 import { ProfileScreen } from "./profile_screen";
 import { SetListScreen } from "./set_list_screen";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { StatisticsScreen } from "./statistics_screen";
+import { BACKGROUND_DARK } from "../../common/default_styles";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -14,7 +15,8 @@ const ICON_SIZE = 22
 
 export const HomeScreen = (props: any) => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            barStyle={styles.bar}>
             <Tab.Screen name="CalendarScreen" component={CalendarScreen}
                 options={{
                     tabBarLabel: 'Calendar',
@@ -53,3 +55,9 @@ export const HomeScreen = (props: any) => {
         </Tab.Navigator>
     )
 }
+
+const styles = StyleSheet.create({
+    bar: {
+        backgroundColor: BACKGROUND_DARK
+    }
+})

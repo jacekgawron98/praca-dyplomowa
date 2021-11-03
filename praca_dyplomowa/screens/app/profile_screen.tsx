@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { View, Text, Pressable } from "react-native";
-import { defaultStyles } from "../../common/default_styles";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import { BACKGROUND_LIGHT, defaultStyles } from "../../common/default_styles";
 import { AuthContext } from "../../contexts/auth-context";
 
 export const ProfileScreen = (props: any) => {
@@ -11,7 +11,7 @@ export const ProfileScreen = (props: any) => {
     }
     
     return (
-        <View>
+        <View style={styles.container}>
             <Text>Profile screen</Text>
             <Pressable onPress={onSignoutClicked}
                 style={defaultStyles.standardButton}>
@@ -20,3 +20,12 @@ export const ProfileScreen = (props: any) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex:1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: BACKGROUND_LIGHT
+    }
+})
