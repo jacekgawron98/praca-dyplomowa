@@ -3,7 +3,7 @@ import { StackActions } from '@react-navigation/routers';
 import { createStackNavigator } from '@react-navigation/stack';
 import SignInScreen from '../screens/login/signin_screen';
 import SignUpScreen from '../screens/login/signup_screen';
-import { AUTH_STACK_ROUTES } from './routes_contants';
+import { AUTH_STACK_ROUTES } from './routes_constants';
 
 const stack = createStackNavigator()
 

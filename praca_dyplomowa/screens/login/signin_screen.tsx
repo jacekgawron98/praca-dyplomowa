@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Dimensions, Pressable, Activ
 import { DARK_COLOR, defaultStyles, PLACEHOLDER_COLOR } from "../../common/default_styles";
 import { AuthContext } from "../../contexts/auth-context";
 import { isStringEmpty } from "../../helpers/string-helper";
-import { AUTH_STACK_ROUTES } from "../../routes/routes_contants";
+import { AUTH_STACK_ROUTES } from "../../routes/routes_constants";
 
 export default function SignInScreen({ navigation }: any) {
     const [login, setLogin] = useState<string>();
