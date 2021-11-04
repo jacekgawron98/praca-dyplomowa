@@ -5,6 +5,7 @@ import cors from 'cors';
 import { connectToDatabase } from './Helpers/database';
 import { authRouter } from './Services/auth-service';
 import { practiceRouter } from './Services/practice-service';
+import { setsRouter } from './Services/sets-service';
 
 const PORT = 5000;
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/api", authRouter)
 app.use("/api", checkIfAuthenticated, practiceRouter);
+app.use("/api", checkIfAuthenticated, setsRouter);
 
 app.listen(PORT, ()=> {
     connectToDatabase();

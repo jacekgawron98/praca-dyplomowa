@@ -30,7 +30,7 @@ interface PracticeItem {
 }
 
 interface PracticeSet {
-    id?: string,
+    _id?: import("mongodb").ObjectId,
     name: string,
     items: PracticeItem[],
     plannedTime?: SetTime,
