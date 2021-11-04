@@ -9,15 +9,29 @@ interface ItemResult {
     item?: PracticeItem;
     items?: PracticeItem[];
 }
-// GET api/item
+// GET api/item/:userId
 const getItems = (req: Request, res: Response<PracticeItem[]>) => {
-    const items: PracticeItem[] = []
-    res.status(200).send(items);
+    const ownerId = req.params.userId;
+    if (!ownerId) {
+        res.status(400).send();
+        return;
+    }
+    fetchItems(ownerId).then( result => {
+        res.status(result.status).send(result.items);
+    })
 }
 
-// GET api/item/:id
+// GET api/item/:userId/:id
 const getItem = (req: Request, res: Response<PracticeItem>) => {
-    throw new Error("Not implemented");
+    const id = req.params.id;
+    const ownerId = req.params.userId;
+    if (!id || !ownerId) {
+        res.status(400).send();
+        return;
+    }
+    fetchItem(id,ownerId).then( result => {
+        res.status(result.status).send(result.item);
+    })
 }
 
 // POST api/item
@@ -26,15 +40,25 @@ const postItem = (req: Request, res: Response) => {
     addItem(item).then( result => {
         if (result.status !== 201) {
             res.status(result.status).send();
+            return;
         }
         res.status(result.status).send(result.item);
     });
 
 }
 
-// PUT api/item/:id
+// PUT api/item/:userId/:id
 const putItem = (req: Request, res: Response) => {
-    throw new Error("Not implemented");
+    const itemId = req.params.id;
+    const ownerId= req.params.userId;
+    const item = req.body;
+    if (!itemId || !ownerId) {
+        res.status(400).send();
+        return;
+    }
+    updateItem(itemId, ownerId, item).then( result => {
+        res.status(result.status).send(result.item);
+    })
 }
 
 // DELETE api/item/:id
@@ -46,6 +70,30 @@ const deleteItem = (req: Request, res: Response) => {
 }
 
 // helper functions
+const fetchItems = async (ownerId: string): Promise<ItemResult> => {
+    const collection = await getCollection<PracticeItem>(collectionName);
+    const items = await collection.find({ownerId}).toArray();
+    return {
+        status: 200,
+        items
+    }
+}
+
+const fetchItem = async (itemId: string, ownerId: string): Promise<ItemResult> => {
+    const collection = await getCollection<PracticeItem>(collectionName);
+    const objId = new ObjectId(itemId);
+    const item = await collection.findOne({_id: objId, ownerId});
+    if (!item) {
+        return {
+            status: 404
+        }
+    }
+    return {
+        status: 200,
+        item,
+    }
+}
+
 const addItem = async (item: PracticeItem): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);
     try {
@@ -59,6 +107,50 @@ const addItem = async (item: PracticeItem): Promise<ItemResult> => {
         return {
             status: 201,
             item
+        }
+    } catch {
+        return {
+            status: 400
+        }
+    }
+}
+
+const updateItem = async (itemId: string, ownerId: string, updatedItem: PracticeItem): Promise<ItemResult> => {
+    const collection = await getCollection<PracticeItem>(collectionName);
+    const originalResult = await fetchItem(itemId, ownerId);
+    if (!originalResult.item) {
+        return {
+            status: originalResult.status
+        }
+    }
+    const originalItem = originalResult.item;
+    const filter = {
+        _id: new ObjectId(itemId),
+        ownerId
+    }
+    const set = {
+        name: updatedItem.name? updatedItem.name : originalItem.name,
+        description: updatedItem.description? updatedItem.description : originalItem.description,
+        duration: updatedItem.duration? updatedItem.duration : originalItem.duration,
+        repeats: updatedItem.repeats? updatedItem.repeats : originalItem.repeats,
+        statisticName: updatedItem.statisticName? updatedItem.statisticName : originalItem.statisticName,
+        videoLink: updatedItem.videoLink? updatedItem.videoLink : originalItem.videoLink,
+        ownerId: updatedItem.ownerId? updatedItem.ownerId : originalItem.ownerId,
+    }
+    Object.keys(set).forEach(key => (set as any)[key]=== undefined ? delete (set as any)[key] : {});
+    const updateData = {
+        $set: set
+    }
+    try {
+        const result = await collection.updateOne(filter, updateData);
+        // TO DO update dla zestawów
+        if (result.modifiedCount !== 1) {
+            return {
+                status: 404
+            }
+        }
+        return {
+            status: 204,
         }
     } catch {
         return {
@@ -82,9 +174,9 @@ const delItem = async (itemId: string): Promise<ItemResult> => {
 }
 
 export const practiceRouter = express.Router();
-practiceRouter.get("/item", getItems);
-practiceRouter.get("/item/:id", getItem)
+practiceRouter.get("/item/:userId", getItems);
+practiceRouter.get("/item/:userId/:id", getItem)
 practiceRouter.post("/item", postItem);
-practiceRouter.put("/item/:id", putItem);
+practiceRouter.put("/item/:userId/:id", putItem);
 practiceRouter.delete("/item/:id", deleteItem);
 
