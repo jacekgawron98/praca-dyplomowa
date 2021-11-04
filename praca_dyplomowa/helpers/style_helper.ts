@@ -1,17 +1,17 @@
-export function padding(top: number, bottom?: number, left?: number, right?: number) {
+export function padding(top: number, left?: number, bottom?: number, right?: number) {
     return { 
         paddingTop: top,
-        paddingBottom: bottom? bottom : top,
-        paddingLeft: left? left : left,
-        paddingRight: right? right : right
+        paddingBottom: bottom !== undefined? bottom : top,
+        paddingLeft: left !== undefined? left : top,
+        paddingRight: right !== undefined? right : left !== undefined? left : top
     }
 }
 
-export function margin(top: number, bottom?: number, left?: number, right?: number) {
+export function margin(top: number, left?: number, bottom?: number, right?: number) {
     return { 
         marginTop: top,
-        marginBottom: bottom? bottom : top,
+        marginBottom: bottom !== undefined? bottom : top,
         marginLeft: left? left : left,
-        marginRight: right? right : right
+        marginRight: right !== undefined? right : left !== undefined? left : top
     }
 }

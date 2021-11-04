@@ -13,12 +13,12 @@ export const defaultStyles = StyleSheet.create({
     standardButton: {
         backgroundColor: MIDDLE_COLOR,
         borderRadius: 25,
-        ...padding(13,13,32,32)
+        ...padding(13,32)
     },
 
     inputView: {
         width: "80%",
-        ...margin(10,10,0,0),
+        ...margin(10,0),
     },
     
     textInput: {
@@ -26,7 +26,7 @@ export const defaultStyles = StyleSheet.create({
         color: "#FFF",
         borderBottomWidth: 1,
         borderBottomColor: "#AAA",
-        ...padding(0,10,0,0)
+        ...padding(0,0,10,0)
     },
 
     linkButton: {
