@@ -48,16 +48,22 @@ const deleteItem = (req: Request, res: Response) => {
 // helper functions
 const addItem = async (item: PracticeItem): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);
-    const res = await collection.insertOne(item);
-    if (!res.acknowledged) {
-        return {
-            status: 500
+    try {
+        const res = await collection.insertOne(item);
+        if (!res.acknowledged) {
+            return {
+                status: 500
+            }
         }
-    }
-    item._id = res.insertedId;
-    return {
-        status: 201,
-        item
+        item._id = res.insertedId;
+        return {
+            status: 201,
+            item
+        }
+    } catch {
+        return {
+            status: 400
+        }
     }
 }
 
