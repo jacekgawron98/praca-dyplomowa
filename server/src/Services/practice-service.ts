@@ -135,6 +135,7 @@ const updateItem = async (itemId: string, ownerId: string, updatedItem: Practice
         repeats: updatedItem.repeats? updatedItem.repeats : originalItem.repeats,
         statisticName: updatedItem.statisticName? updatedItem.statisticName : originalItem.statisticName,
         videoLink: updatedItem.videoLink? updatedItem.videoLink : originalItem.videoLink,
+        tags: updatedItem.tags !== undefined? updatedItem.tags : originalItem.tags,
         ownerId: updatedItem.ownerId? updatedItem.ownerId : originalItem.ownerId,
     }
     Object.keys(set).forEach(key => (set as any)[key]=== undefined ? delete (set as any)[key] : {});

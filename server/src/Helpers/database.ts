@@ -57,6 +57,12 @@ const addItemsValidation = async (db: mongodb.Db) => {
                         videoLink: {
                             bsonType: "string"
                         },
+                        tags: {
+                            bsonType: "array",
+                            items: {
+                                bsonType: "string"
+                            }
+                        },
                         ownerId: {
                             bsonType: "string"
                         },
@@ -110,6 +116,12 @@ const addSetsValidation = async (db: mongodb.Db) => {
                                     },
                                     videoLink: {
                                         bsonType: "string"
+                                    },
+                                    tags: {
+                                        bsonType: "array",
+                                        items: {
+                                            bsonType: "string"
+                                        }
                                     },
                                     ownerId: {
                                         bsonType: "string"

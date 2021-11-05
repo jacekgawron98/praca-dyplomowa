@@ -26,6 +26,7 @@ interface PracticeItem {
     repeats?: number,
     statisticName?: string,
     videoLink?: string,
+    tags?: string[],
     ownerId: string,
 }
 
