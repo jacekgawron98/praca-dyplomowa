@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { getCollection } from '../Helpers/database';
+import { getCollection, getCommandResult } from '../Helpers/database';
 
 const collectionName = "items"
 
@@ -8,7 +8,22 @@ interface ItemResult {
     status: number;
     item?: PracticeItem;
     items?: PracticeItem[];
+    tags?: string[]
 }
+
+const getItemsTags = (req: Request, res: Response<string[]>) => {
+    const ownerId = req.params.userId;
+    if (!ownerId) {
+        res.status(400).send();
+        return;
+    }
+    fetchTags(ownerId).then( result => {
+        res.status(result.status).send(result.tags);
+    }).catch( err => {
+        console.log(err);
+    })
+}
+
 // GET api/item/:userId
 const getItems = (req: Request, res: Response<PracticeItem[]>) => {
     const ownerId = req.params.userId;
@@ -174,8 +189,30 @@ const delItem = async (itemId: string): Promise<ItemResult> => {
     }
 }
 
+const fetchTags = async (ownerId: string): Promise<ItemResult> => {
+    const query = {
+        "distinct": collectionName,
+        "key": "tags",
+        "query": {
+            "ownerId": ownerId
+        }
+    }
+    let result;
+    result = await getCommandResult(query);
+    if (result.ok !== 1) {
+        return {
+            status: 400
+        }
+    }
+    return {
+        status: 200,
+        tags: result.values
+    }
+}
+
 export const practiceRouter = express.Router();
 practiceRouter.get("/item/:userId", getItems);
+practiceRouter.get("/item/:userId/tags", getItemsTags);
 practiceRouter.get("/item/:userId/:id", getItem)
 practiceRouter.post("/item", postItem);
 practiceRouter.put("/item/:userId/:id", putItem);

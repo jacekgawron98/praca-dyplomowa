@@ -24,6 +24,10 @@ export const getCollection = async <T>(collection: string) => {
     return database.collection<T>(collection);
 }
 
+export const getCommandResult = async (command: any) => {
+    return database.command(command);
+}
+
 const addItemsValidation = async (db: mongodb.Db) => {
     db.createCollection("items", {}, async (error,collection) => {
         if (error) {
