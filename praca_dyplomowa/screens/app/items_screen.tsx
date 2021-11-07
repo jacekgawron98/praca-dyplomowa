@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, ListRenderItemInfo, Dimensions, Pressable, GestureResponderEvent } from "react-native";
+import { View, StyleSheet, ListRenderItemInfo, Alert, Modal, Text, FlatList, Pressable } from "react-native";
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, defaultStyles, MIDDLE_COLOR } from "../../common/default_styles";
 import { AuthContext } from "../../contexts/auth-context";
 import * as itemsService from "../../services/items-service";
 import { margin, padding } from "../../helpers/style_helper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { ListItem } from "../../components/list_items";
+import { showConfirmAlert, showInfoAlert } from "../../helpers/alerts";
 
 const ICON_SIZE = 40
 
 export const ItemsScreen = (props: any) => {
     const [items, setItems] = useState<PracticeItem[]>([]);
+    const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(true);
     const authContext = useContext(AuthContext);
 
     useEffect(() => {
@@ -31,8 +33,24 @@ export const ItemsScreen = (props: any) => {
         console.log("add new item");
     }
 
+    const onItemDeleteClicked = async (itemId?: string) => {
+        if (!itemId) return;
+        const result = await showConfirmAlert("Delete item", "Are you sure you want to delete this item?");
+        if (result && authContext.token) {
+            itemsService.deleteItem(itemId, authContext.token).then(result => {
+                if (result) {
+                    const newItems = items.filter(item => item._id !== itemId);
+                    setItems(newItems);
+                } else {
+                    showInfoAlert("Error", "Cannot delete item. Try again later.");
+                }
+            })
+        }
+        console.log(`Delete: ${itemId}`);
+    }
+
     const listItem = (item: ListRenderItemInfo<PracticeItem>) => (
-        <ListItem item={item}></ListItem>
+        <ListItem item={item} onDeleteClicked={() => onItemDeleteClicked(item.item._id)}></ListItem>
     )
 
     return (

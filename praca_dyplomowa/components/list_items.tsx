@@ -1,5 +1,5 @@
 import React from "react";
-import { ListRenderItemInfo, View, Text, Pressable, Dimensions, StyleSheet } from "react-native";
+import { ListRenderItemInfo, View, Text, Pressable, Dimensions, StyleSheet, GestureResponderEvent } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, defaultStyles } from "../common/default_styles";
 import { margin, padding } from "../helpers/style_helper";
@@ -8,14 +8,10 @@ const ICON_SIZE = 28
 
 interface ListItemProps {
     item: ListRenderItemInfo<PracticeItem>
+    onDeleteClicked: (event: GestureResponderEvent) => void
 }
 
 export const ListItem = (props: ListItemProps) => {
-
-    const onItemDeleteClicked = (itemId?: string) => {
-        if (!itemId) return;
-        console.log(`Delete: ${itemId}`);
-    }
 
     const onItemEditClicked = (itemId?: string) => {
         if (!itemId) return;
@@ -42,7 +38,7 @@ export const ListItem = (props: ListItemProps) => {
                 <Pressable onPress={() => onItemEditClicked(props.item.item._id)}>
                     <MaterialIcons name="edit" color={"#fff"} size={ICON_SIZE}/>
                 </Pressable>
-                <Pressable onPress={() => onItemDeleteClicked(props.item.item._id)}>
+                <Pressable onPress={props.onDeleteClicked}>
                     <MaterialIcons name="delete" color={"#e33"} size={ICON_SIZE}/>
                 </Pressable>
             </View>

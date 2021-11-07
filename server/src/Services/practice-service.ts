@@ -81,6 +81,8 @@ const deleteItem = (req: Request, res: Response) => {
     const id: string = req.params.id;
     delItem(id).then( result => {
         res.status(result.status).send();
+    }).catch( err => {
+        res.status(400).send();
     })
 }
 
@@ -178,14 +180,20 @@ const updateItem = async (itemId: string, ownerId: string, updatedItem: Practice
 const delItem = async (itemId: string): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);
     const objId = new ObjectId(itemId);
-    const result = await collection.deleteOne({ _id: objId});
-    if (!result.acknowledged) {
+    try {
+        const result = await collection.deleteOne({ _id: objId});
+        if (!result.acknowledged) {
+            return {
+                status: 400
+            }
+        }
+        return {
+            status: result.deletedCount === 1? 204 : 404
+        }
+    } catch {
         return {
             status: 400
         }
-    }
-    return {
-        status: result.deletedCount === 1? 204 : 404
     }
 }
 
