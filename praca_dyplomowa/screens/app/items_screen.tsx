@@ -7,13 +7,14 @@ import { margin, padding } from "../../helpers/style_helper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { ListItem } from "../../components/list_items";
 import { showConfirmAlert, showInfoAlert } from "../../helpers/alerts";
+import { useIsFocused } from "@react-navigation/core";
 
 const ICON_SIZE = 40
 
 export const ItemsScreen = (props: any) => {
     const [items, setItems] = useState<PracticeItem[]>([]);
-    const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(true);
     const authContext = useContext(AuthContext);
+    const isFocused = useIsFocused();
 
     useEffect(() => {
         const getItems = async () => {
@@ -27,10 +28,10 @@ export const ItemsScreen = (props: any) => {
             }
         }
         getItems();
-    }, [])
+    },[isFocused])
 
     const onAddClicked = () => {
-        console.log("add new item");
+        props.navigation.navigate("ItemFormScreen",{})
     }
 
     const onItemDeleteClicked = async (itemId?: string) => {
@@ -50,7 +51,7 @@ export const ItemsScreen = (props: any) => {
     }
 
     const listItem = (item: ListRenderItemInfo<PracticeItem>) => (
-        <ListItem item={item} onDeleteClicked={() => onItemDeleteClicked(item.item._id)}></ListItem>
+        <ListItem navigation={props.navigation} item={item} onDeleteClicked={() => onItemDeleteClicked(item.item._id)}></ListItem>
     )
 
     return (

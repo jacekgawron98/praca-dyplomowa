@@ -50,6 +50,50 @@ export const getItem = async (userId: string, itemId: string, token: string) : P
     return item;
 }
 
+export const addItem = async (item: PracticeItem, token: string) : Promise<PracticeItem|undefined> => {
+    const request ={
+        method: 'POST',
+        headers: defaultHeaders(token),
+        body: JSON.stringify(item)
+    }
+    let result;
+    try {
+        console.log("add")
+        result = await fetch(`${process.env.API_ADDRESS}/item`, request)
+    } catch {
+        throw 408;
+    }
+    if (result.ok) {
+        const resultData: PracticeItem = await result.json();
+        if (resultData) {
+            item = resultData;
+        }
+    } else {
+        return undefined
+    }
+    return item;
+}
+
+export const updateItem = async (item: PracticeItem, userId: string, token: string) : Promise<boolean> => {
+    const request ={
+        method: 'PUT',
+        headers: defaultHeaders(token),
+        body: JSON.stringify(item)
+    }
+    let result;
+    try {
+        console.log("update")
+        result = await fetch(`${process.env.API_ADDRESS}/item/${userId}/${item._id}`, request)
+    } catch {
+        throw 408;
+    }
+    if (result.ok) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 export const deleteItem = async (itemId: string, token: string) : Promise<boolean> => {
     const request ={
         method: 'DELETE',

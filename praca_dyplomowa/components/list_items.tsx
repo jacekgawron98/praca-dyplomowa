@@ -8,6 +8,7 @@ const ICON_SIZE = 28
 
 interface ListItemProps {
     item: ListRenderItemInfo<PracticeItem>
+    navigation: any
     onDeleteClicked: (event: GestureResponderEvent) => void
 }
 
@@ -16,6 +17,7 @@ export const ListItem = (props: ListItemProps) => {
     const onItemEditClicked = (itemId?: string) => {
         if (!itemId) return;
         console.log(`Edit: ${itemId}`);
+        props.navigation.navigate("ItemFormScreen",{item: props.item.item})
     }
 
     const tagsList = props.item.item.tags?.map((tag) => (
