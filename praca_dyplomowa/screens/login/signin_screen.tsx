@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Dimensions, Pressable, ActivityIndicator } from "react-native";
 import { DARK_COLOR, defaultStyles, PLACEHOLDER_COLOR } from "../../common/default_styles";
 import { AuthContext } from "../../contexts/auth-context";
-import { isStringEmpty } from "../../helpers/string-helper";
+import { isStringEmpty } from "../../helpers/types_helper";
 import { AUTH_STACK_ROUTES } from "../../routes/routes_constants";
 
 export default function SignInScreen({ navigation }: any) {

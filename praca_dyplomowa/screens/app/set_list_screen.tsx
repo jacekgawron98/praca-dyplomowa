@@ -1,11 +1,22 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { BACKGROUND_LIGHT } from "../../common/default_styles";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { BACKGROUND_LIGHT, defaultStyles } from "../../common/default_styles";
+
+const ICON_SIZE = 40
 
 export const SetListScreen = (props: any) => {
+
+    const onAddClicked = () => {
+        props.navigation.navigate("SetFormScreen",{})
+    }
+
     return (
         <View style={styles.container}>
-            <Text>Sets list screen</Text>
+            <Pressable onPress={onAddClicked}
+                style={defaultStyles.floatingButton}>
+                <MaterialIcons name="add" color={"#fff"} size={ICON_SIZE}/>
+            </Pressable>
         </View>
     )
 }

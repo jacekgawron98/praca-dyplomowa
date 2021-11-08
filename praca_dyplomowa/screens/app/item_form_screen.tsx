@@ -186,7 +186,7 @@ export const ItemFormScreen = ({ route, navigation }: any) => {
                 <View style={styles.switchSection}>
                     <Text style={[defaultStyles.standardText, styles.switchText]}>Repeats</Text>
                     <Switch
-                        style={styles.switch}
+                        style={defaultStyles.switch}
                         trackColor={{ false: "#767577", true: "#767577" }}
                         thumbColor={MIDDLE_COLOR}
                         ios_backgroundColor="#3e3e3e"
@@ -310,14 +310,6 @@ const styles = StyleSheet.create({
     switchText: {
         fontSize: 18,
         fontWeight: "bold",
-    },
-    
-    switch: {
-        ...margin(0,20),
-        transform: [
-            {scaleX: 1.2},
-            {scaleY: 1.2}
-        ]
     },
 
     sectionTitle: {

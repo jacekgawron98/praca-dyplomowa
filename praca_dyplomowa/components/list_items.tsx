@@ -7,9 +7,11 @@ import { margin, padding } from "../helpers/style_helper";
 const ICON_SIZE = 28
 
 interface ListItemProps {
-    item: ListRenderItemInfo<PracticeItem>
+    item: PracticeItem
     navigation: any
-    onDeleteClicked: (event: GestureResponderEvent) => void
+    isAdder?: boolean
+    onDeleteClicked?: (event: GestureResponderEvent) => void
+    onAddClicked?: (event: GestureResponderEvent) => void
 }
 
 export const ListItem = (props: ListItemProps) => {
@@ -17,10 +19,10 @@ export const ListItem = (props: ListItemProps) => {
     const onItemEditClicked = (itemId?: string) => {
         if (!itemId) return;
         console.log(`Edit: ${itemId}`);
-        props.navigation.navigate("ItemFormScreen",{item: props.item.item})
+        props.navigation.navigate("ItemFormScreen",{item: props.item})
     }
 
-    const tagsList = props.item.item.tags?.map((tag) => (
+    const tagsList = props.item.tags?.map((tag) => (
         <View style={styles.tag} key={tag}>
             <Text style={defaultStyles.standardText}>{tag}</Text>
         </View>
@@ -29,21 +31,28 @@ export const ListItem = (props: ListItemProps) => {
     return (
         <View style={styles.listItem}>
             <View style={styles.content}>
-                <Text style={[defaultStyles.standardText, styles.itemName]}>{props.item.item.name}</Text>
-                {props.item.item.repeats && <Text style={defaultStyles.standardText}>Repeats: {props.item.item.repeats}</Text>}
-                {props.item.item.duration && <Text style={defaultStyles.standardText}>Duration: {props.item.item.duration} seconds</Text>}
+                <Text style={[defaultStyles.standardText, styles.itemName]}>{props.item.name}</Text>
+                {props.item.repeats && <Text style={defaultStyles.standardText}>Repeats: {props.item.repeats}</Text>}
+                {props.item.duration && <Text style={defaultStyles.standardText}>Duration: {props.item.duration} seconds</Text>}
                 <View style={styles.tagsList}>
                     {tagsList}
                 </View>
             </View>
+            {!props.isAdder &&
             <View style={styles.listItemButtons}>
-                <Pressable onPress={() => onItemEditClicked(props.item.item._id)}>
-                    <MaterialIcons name="edit" color={"#fff"} size={ICON_SIZE}/>
+                    <Pressable onPress={() => onItemEditClicked(props.item._id)}>
+                        <MaterialIcons name="edit" color={"#fff"} size={ICON_SIZE}/>
+                    </Pressable>
+                    <Pressable onPress={props.onDeleteClicked}>
+                        <MaterialIcons name="delete" color={"#e33"} size={ICON_SIZE}/>
+                    </Pressable>
+            </View>}
+            {props.isAdder &&
+            <View style={styles.listItemButtons}>
+                <Pressable onPress={props.onAddClicked}>
+                    <MaterialIcons name="add" color={"#fff"} size={ICON_SIZE}/>
                 </Pressable>
-                <Pressable onPress={props.onDeleteClicked}>
-                    <MaterialIcons name="delete" color={"#e33"} size={ICON_SIZE}/>
-                </Pressable>
-            </View>
+            </View>}
         </View>
     )
 }

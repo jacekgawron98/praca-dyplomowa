@@ -51,7 +51,7 @@ export const ItemsScreen = (props: any) => {
     }
 
     const listItem = (item: ListRenderItemInfo<PracticeItem>) => (
-        <ListItem navigation={props.navigation} item={item} onDeleteClicked={() => onItemDeleteClicked(item.item._id)}></ListItem>
+        <ListItem navigation={props.navigation} item={item.item} onDeleteClicked={() => onItemDeleteClicked(item.item._id)}></ListItem>
     )
 
     return (
@@ -63,7 +63,7 @@ export const ItemsScreen = (props: any) => {
                 keyExtractor={item => item._id? item._id : item.name + Date.now()}
             />}
             <Pressable onPress={onAddClicked}
-                style={styles.floatingButton}>
+                style={defaultStyles.floatingButton}>
                 <MaterialIcons name="add" color={"#fff"} size={ICON_SIZE}/>
             </Pressable>
         </View>
@@ -77,13 +77,4 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: BACKGROUND_LIGHT
     },
-
-    floatingButton: {
-        position: "absolute",
-        backgroundColor: MIDDLE_COLOR,
-        bottom: 25,
-        right: 25,
-        borderRadius: 100,
-        ...padding(10)
-    }
 })

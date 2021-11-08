@@ -8,16 +8,6 @@ interface User {
     login: string,
 }
 
-declare enum DayOfWeek {
-    monday,
-    tuesday,
-    wednesday,
-    thursday,
-    friday,
-    saturday,
-    sunday
-}
-
 interface PracticeItem {
     _id?: string,
     name: string,
@@ -39,7 +29,7 @@ interface PracticeSet {
 }
 
 interface SetTime {
-    day: DayOfWeek,
+    day: string,
     hour: number,
     minute: number,
     isWeekly: boolean

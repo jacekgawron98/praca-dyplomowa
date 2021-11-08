@@ -50,6 +50,23 @@ export const defaultStyles = StyleSheet.create({
 
     alertText: {
         color: ALERT_COLOR
-    }
+    },
+
+    floatingButton: {
+        position: "absolute",
+        backgroundColor: MIDDLE_COLOR,
+        bottom: 25,
+        right: 25,
+        borderRadius: 100,
+        ...padding(10)
+    },
+    
+    switch: {
+        ...margin(0,20),
+        transform: [
+            {scaleX: 1.2},
+            {scaleY: 1.2}
+        ]
+    },
 })
 
