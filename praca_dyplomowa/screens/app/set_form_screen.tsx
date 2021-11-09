@@ -13,7 +13,7 @@ import * as setsService from "../../services/sets-service";
 const ICON_SIZE = 32
 
 export const SetFormScreen = ({ route, navigation }: any) => {
-    const [set, setSet] = useState<PracticeSet>({name:"",ownerId:"",items: []});
+    const [set, setSet] = useState<PracticeSet>({name:"test name",ownerId:"",items: []});
     const [items, setItems] = useState<PracticeItem[]>([]);
     const [isNew, setIsNew] = useState<boolean>(false);
     const [isError, setError] = useState<boolean>(false);
@@ -40,13 +40,13 @@ export const SetFormScreen = ({ route, navigation }: any) => {
     
     useEffect(() => {
         if (authContext.account?._id) {
-            if (route.params.item) {
+            if (route.params.set) {
                 setSet(route.params.set);
-                if (route.params.plannedTime) {
+                if (route.params.set.plannedTime) {
                     setIsScheduled(true);
-                    setHours(route.params.plannedTime.hour.toString())
-                    setMinutes(route.params.plannedTime.minute.toString())
-                    setDay(route.params.plannedTime.day)
+                    setHours(route.params.set.plannedTime.hour.toString())
+                    setMinutes(route.params.set.plannedTime.minute.toString())
+                    setDay(route.params.set.plannedTime.day)
                 }
             } else {
                 setSet({
@@ -82,12 +82,14 @@ export const SetFormScreen = ({ route, navigation }: any) => {
                     setError(true);
                 }
             } else {
-                try {
-                    console.log(set);
-                    navigation.navigate("SetsScreen");
-                } catch (error: any){
-                    console.log(error);
-                    setError(true);
+                if (authContext.account?._id && authContext.token){
+                    try {
+                        setsService.updateSet(set, authContext.account?._id, authContext.token);
+                        navigation.navigate("SetsScreen");
+                    } catch (error: any){
+                        console.log(error);
+                        setError(true);
+                    }
                 }
             }
         }
