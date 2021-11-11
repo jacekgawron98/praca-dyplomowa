@@ -68,5 +68,13 @@ export const defaultStyles = StyleSheet.create({
             {scaleY: 1.2}
         ]
     },
+
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexDirection: "row",
+        ...padding(10,15)
+    },
 })
 

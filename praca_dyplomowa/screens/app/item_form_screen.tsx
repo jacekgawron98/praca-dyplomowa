@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Dimensions, Switch, ScrollView, Pres
 import { TouchableOpacity } from "react-native-gesture-handler";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, defaultStyles, MIDDLE_COLOR, PLACEHOLDER_COLOR } from "../../common/default_styles";
+import { ButtonHeader } from "../../components/button_header";
 import { AuthContext } from "../../contexts/auth-context";
 import { margin, padding } from "../../helpers/style_helper";
 import * as itemsService from "../../services/items-service";
@@ -146,19 +147,10 @@ export const ItemFormScreen = ({ route, navigation }: any) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View>
-                    <Pressable onPress={onReturnClicked}>
-                        <MaterialIcons name="chevron-left" color={"#fff"} size={ICON_SIZE}/>
-                    </Pressable>
-                </View>
-                <View>
-                    <Pressable onPress={onConfirmClicked}
-                        style={defaultStyles.standardButton}>
-                        <Text style={defaultStyles.buttonText}>Confirm</Text>
-                    </Pressable>
-                </View>
-            </View>
+            <ButtonHeader navigation={navigation}
+                onButtonClicked={onConfirmClicked}
+                buttonText={"Done"}>
+            </ButtonHeader>
             <ScrollView contentContainerStyle={styles.scroll}>
                 {isError && <Text style={defaultStyles.alertText}>Cannot connect to the server</Text>}
                 <View style={defaultStyles.inputView}>
@@ -280,14 +272,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: BACKGROUND_LIGHT,
         ...padding(0,0)
-    },
-
-    header: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexDirection: "row",
-        ...padding(10,15)
     },
 
     scroll: {

@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Dimensions, ListRenderItemInfo, FlatList, Switch } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, defaultStyles, LIGHT_COLOR, MIDDLE_COLOR, PLACEHOLDER_COLOR } from "../../common/default_styles";
+import { ButtonHeader } from "../../components/button_header";
 import { ListItem } from "../../components/list_items";
 import { AuthContext } from "../../contexts/auth-context";
 import { margin, padding } from "../../helpers/style_helper";
@@ -95,10 +96,6 @@ export const SetFormScreen = ({ route, navigation }: any) => {
         }
     }
 
-    const onReturnClicked = () => {
-        navigation.goBack();
-    }
-
     const validateForm = () => {
         let result = true;
         if (!set.name) {
@@ -179,19 +176,10 @@ export const SetFormScreen = ({ route, navigation }: any) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View>
-                    <Pressable onPress={onReturnClicked}>
-                        <MaterialIcons name="chevron-left" color={"#fff"} size={ICON_SIZE}/>
-                    </Pressable>
-                </View>
-                <View>
-                    <Pressable onPress={onConfirmClicked}
-                        style={defaultStyles.standardButton}>
-                        <Text style={defaultStyles.buttonText}>Done</Text>
-                    </Pressable>
-                </View>
-            </View>
+            <ButtonHeader navigation={navigation}
+                onButtonClicked={onConfirmClicked}
+                buttonText={"Done"}>
+            </ButtonHeader>
             <ScrollView contentContainerStyle={styles.scroll}>
                 {isError && <Text style={defaultStyles.alertText}>Cannot connect to the server</Text>}
                 <View style={defaultStyles.inputView}>
@@ -269,14 +257,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: BACKGROUND_LIGHT,
         ...padding(0,0)
-    },
-
-    header: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexDirection: "row",
-        ...padding(10,15)
     },
 
     scroll: {
