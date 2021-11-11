@@ -49,8 +49,14 @@ export const SetListScreen = (props: any) => {
         console.log(`[log]: Delete set: ${setId}`);
     }
 
+    const onSetClicked = async (set: PracticeSet) => {
+        props.navigation.navigate("ExerciseScreen",{set: set})
+    }
+
     const listSet = (setInfo: ListRenderItemInfo<PracticeSet>) => (
-        <ListSet navigation={props.navigation} set={setInfo.item} onDeleteClicked={() => onSetDeleteClicked(setInfo.item._id)}></ListSet>
+        <Pressable onPress={() => onSetClicked(setInfo.item)}>
+            <ListSet navigation={props.navigation} set={setInfo.item} onDeleteClicked={() => onSetDeleteClicked(setInfo.item._id)}></ListSet>
+        </Pressable>
     )
 
     return (
