@@ -4,6 +4,8 @@ import { Dimensions, GestureResponderEvent, View, StyleSheet, Text, Pressable } 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_DARK, defaultStyles, MIDDLE_COLOR } from "../common/default_styles";
 import { margin, padding } from "../helpers/style_helper";
+import { youtubeParser } from "../helpers/types_helper";
+import YoutubePlayer from "react-native-youtube-iframe";
 
 const ICON_SIZE = 24
 
@@ -22,6 +24,7 @@ export const ExerciseItem = (props: ListSetProps) => {
     const [itemFinished, setItemFinished] = useState<boolean>(false);
     const [itemStarted, setItemStarted] = useState<boolean>(false);
     const [currentTime, setCurrentTime] = useState<number>(0);
+    const [videoPlaying, setVideoPlaying] = useState<boolean>(false);
 
     let timer: any;
 
@@ -72,6 +75,12 @@ export const ExerciseItem = (props: ListSetProps) => {
         setItemFinished(true);
     }
 
+    const onVideoStateChange = (state: any) => {
+        if (state === "ended") {
+            setVideoPlaying(false);
+        }
+    }
+
     const getTimeString = (time: number) => {
         const hours = Math.floor(time / 3600);
         const minutes = Math.floor((time % 3600) / 60);
@@ -105,6 +114,14 @@ export const ExerciseItem = (props: ListSetProps) => {
                         <Text style={defaultStyles.buttonText}>Mark as done</Text>
                     </Pressable>
                 </View>
+            </View>}
+            {(props.isActive && !itemFinished && props.item.videoLink) && <View>
+                <Text style={[defaultStyles.standardText, {fontSize: 16, ...margin(5,0)}]}>Related video</Text>
+                <YoutubePlayer  
+                    height={200}        
+                    play={videoPlaying}        
+                    videoId={youtubeParser(props.item.videoLink)}        
+                    onChangeState={onVideoStateChange}/>
             </View>}
             {(props.isActive && itemFinished) && <View style={[styles.activeContent]}>
                 <View style={styles.content}>
