@@ -4,7 +4,7 @@ import { Dimensions, GestureResponderEvent, View, StyleSheet, Text, Pressable, T
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_DARK, defaultStyles, MIDDLE_COLOR, PLACEHOLDER_COLOR } from "../common/default_styles";
 import { margin, padding } from "../helpers/style_helper";
-import { youtubeParser } from "../helpers/types_helper";
+import { getTimeString, youtubeParser } from "../helpers/types_helper";
 import YoutubePlayer from "react-native-youtube-iframe";
 
 const ICON_SIZE = 24
@@ -81,16 +81,6 @@ export const ExerciseItem = (props: ListSetProps) => {
         if (state === "ended") {
             setVideoPlaying(false);
         }
-    }
-
-    const getTimeString = (time: number) => {
-        const hours = Math.floor(time / 3600);
-        const minutes = Math.floor((time % 3600) / 60);
-        const seconds = (time % 3600) % 60;
-        const sHours = hours < 10? `0${hours}` : hours.toString();
-        const sMinutes = minutes < 10? `0${minutes}` : minutes.toString();
-        const sSeconds = seconds < 10? `0${seconds}` : seconds.toString();
-        return `${sHours}:${sMinutes}:${sSeconds}`;
     }
 
     return (

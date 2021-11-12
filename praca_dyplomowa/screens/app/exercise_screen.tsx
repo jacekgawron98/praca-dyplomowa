@@ -5,7 +5,9 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_LIGHT, defaultStyles } from "../../common/default_styles";
 import { ButtonHeader } from "../../components/button_header";
 import { ExerciseItem } from "../../components/exercise_item";
+import { showInfoAlert } from "../../helpers/alerts";
 import { padding } from "../../helpers/style_helper";
+import { getTimeString } from "../../helpers/types_helper";
 
 interface ItemInfo {
     item: PracticeItem,
@@ -16,6 +18,7 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
     const [set, setSet] = useState<PracticeSet>({name:"test name",ownerId:"",items: []});
     const [buttonState, setButtonState] = useState<string>("Start");
     const [activeIndex, setActiveIndex] = useState<number>(-1);
+    const [startTime, setStartTime] = useState<number>(0);
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -36,11 +39,13 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
 
     const onStartClicked = () => {
         setActiveIndex(0);
+        setStartTime(Date.now());
         setButtonState("Reset");
     }
 
     const onResetClicked = () => {
         setActiveIndex(-1);
+        setStartTime(0);
         setButtonState("Start");
     }
 
@@ -50,6 +55,8 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
             // TO DO zapisywanie statystyki
         }
         if (activeIndex + 1 === set.items.length) {
+            const time = (Date.now() - startTime);
+            showInfoAlert("Set finished", `You finished set in ${getTimeString(time/1000)}`);
             // TO DO zapisywanie w historii + wyświetlenie podsumowania
         }
         setActiveIndex(activeIndex + 1)
