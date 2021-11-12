@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/core";
-import { Dimensions, GestureResponderEvent, View, StyleSheet, Text, Pressable } from "react-native";
+import { Dimensions, GestureResponderEvent, View, StyleSheet, Text, Pressable, TextInput } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { BACKGROUND_DARK, defaultStyles, MIDDLE_COLOR } from "../common/default_styles";
+import { BACKGROUND_DARK, defaultStyles, MIDDLE_COLOR, PLACEHOLDER_COLOR } from "../common/default_styles";
 import { margin, padding } from "../helpers/style_helper";
 import { youtubeParser } from "../helpers/types_helper";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -15,7 +15,7 @@ interface ListSetProps {
     isActive: boolean
     isLast?: boolean
     navigation: any
-    onNextClicked: (event: GestureResponderEvent) => void
+    onNextClicked: (statValue?: string) => void
     onRepeatClicked?: (event: GestureResponderEvent) => void
 
 }
@@ -25,6 +25,7 @@ export const ExerciseItem = (props: ListSetProps) => {
     const [itemStarted, setItemStarted] = useState<boolean>(false);
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [videoPlaying, setVideoPlaying] = useState<boolean>(false);
+    const [statValue, setStatValue] = useState<string>("0");
 
     let timer: any;
 
@@ -32,6 +33,7 @@ export const ExerciseItem = (props: ListSetProps) => {
         if (props.isActive) {
             setItemStarted(false);
             setItemFinished(false);
+            setStatValue("0");
             if (props.item.duration) {
                 setCurrentTime(props.item.duration);
             }
@@ -126,12 +128,19 @@ export const ExerciseItem = (props: ListSetProps) => {
             {(props.isActive && itemFinished) && <View style={[styles.activeContent]}>
                 <View style={styles.content}>
                     <Text style={[defaultStyles.standardText,styles.itemName]}>Exercise finished!</Text>
+                    {props.item.statisticName && <View style={{flexDirection: "row", ...margin(20,0)}}>
+                        <Text style={[defaultStyles.standardText,{fontSize: 20}]}>{props.item.statisticName}: </Text>
+                        <TextInput value={statValue} 
+                                keyboardType="numeric"
+                                onChangeText={text => { setStatValue(text)}}
+                                style={[defaultStyles.textInput, {width: "25%", textAlign:"center"}]}/>
+                    </View>}
                     <View style={{flexDirection: "row"}}>
                         <Pressable onPress={onRepeatClicked}
                             style={[defaultStyles.standardButton,{...margin(10)}]}>
                             <Text style={defaultStyles.buttonText}>Repeat</Text>
                         </Pressable>
-                        <Pressable onPress={props.onNextClicked}
+                        <Pressable onPress={() => props.onNextClicked(props.item.statisticName? statValue : undefined)}
                             style={[defaultStyles.standardButton,{...margin(10)}]}>
                             <Text style={defaultStyles.buttonText}>{props.isLast? "Finish" : "Next"}</Text>
                         </Pressable>

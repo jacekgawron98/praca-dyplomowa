@@ -44,7 +44,11 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
         setButtonState("Start");
     }
 
-    const onNextClicked = () => {
+    const onNextClicked = (statValue?: string) => {
+        if (statValue) {
+            console.log(statValue);
+            // TO DO zapisywanie statystyki
+        }
         if (activeIndex + 1 === set.items.length) {
             // TO DO zapisywanie w historii + wyświetlenie podsumowania
         }
