@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { getCollection, getCommandResult } from '../Helpers/database';
+import { deleteItemInSets, updateItemInSets } from './sets-service';
 
 const collectionName = "items"
 
@@ -161,12 +162,12 @@ const updateItem = async (itemId: string, ownerId: string, updatedItem: Practice
     }
     try {
         const result = await collection.updateOne(filter, updateData);
-        // TO DO update dla zestawów
         if (result.modifiedCount !== 1) {
             return {
                 status: 404
             }
         }
+        await updateItemInSets(updatedItem,ownerId);
         return {
             status: 204,
         }
@@ -181,14 +182,15 @@ const delItem = async (itemId: string): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);
     const objId = new ObjectId(itemId);
     try {
-        const result = await collection.deleteOne({ _id: objId});
-        if (!result.acknowledged) {
-            return {
-                status: 400
-            }
-        }
+        // const result = await collection.deleteOne({ _id: objId});
+        // if (!result.acknowledged) {
+        //    return {
+        //        status: 400
+        //    }
+        // }
+        await deleteItemInSets(itemId);
         return {
-            status: result.deletedCount === 1? 204 : 404
+            status: 204
         }
     } catch {
         return {

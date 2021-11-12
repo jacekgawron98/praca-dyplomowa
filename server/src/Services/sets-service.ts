@@ -115,7 +115,7 @@ const addSet = async (set: PracticeSet): Promise<SetResult> => {
 }
 
 const updateSet = async (setId: string, ownerId: string, updatedSet: PracticeSet): Promise<SetResult> => {
-    const collection = await getCollection<PracticeItem>(collectionName);
+    const collection = await getCollection<PracticeSet>(collectionName);
     const originalResult = await fetchSet(setId, ownerId);
     if (!originalResult.set) {
         return {
@@ -155,7 +155,7 @@ const updateSet = async (setId: string, ownerId: string, updatedSet: PracticeSet
 }
 
 const delSet = async (itemId: string): Promise<SetResult> => {
-    const collection = await getCollection<PracticeItem>(collectionName);
+    const collection = await getCollection<PracticeSet>(collectionName);
     const objId = new ObjectId(itemId);
     const result = await collection.deleteOne({ _id: objId});
     if (!result.acknowledged) {
@@ -166,6 +166,71 @@ const delSet = async (itemId: string): Promise<SetResult> => {
     return {
         status: result.deletedCount === 1? 204 : 404
     }
+}
+
+// Pewno da się zrobić lepiej
+export const updateItemInSets = async (item: PracticeItem, ownerId: string) => {
+    const collection = await getCollection<PracticeSet>(collectionName);
+    const sets = await collection.find({ownerId}).toArray();
+
+    try {
+        sets.forEach(async (setItem) => {
+            const newItems = setItem.items.map(i => {
+                return i._id === item._id? item : i;
+            })
+            const filter = {
+                _id: new ObjectId(setItem._id),
+                ownerId
+            }
+            const set = {
+                $set: {
+                    items: newItems
+                }
+            }
+            try {
+                const result = await collection.updateOne(filter, set);
+                if (result.modifiedCount !== 1) {
+                    throw Error("NotModified")
+                }
+            } catch {
+                throw Error("DbError")
+            }
+        })
+    } catch {
+        return false;
+    }
+    return true;
+}
+
+export const deleteItemInSets = async (itemId: string) => {
+    const collection = await getCollection<PracticeSet>(collectionName);
+    const sets = await collection.find().toArray();
+
+    try {
+        sets.forEach(async (setItem) => {
+            const objId = new ObjectId(itemId);
+            const newItems = setItem.items.filter(i => i._id.toString() !== itemId);
+            const filter = {
+                _id: new ObjectId(setItem._id),
+            }
+            const set = {
+                $set: {
+                    items: newItems
+                }
+            }
+            try {
+                const result = await collection.updateOne(filter, set);
+                if (result.modifiedCount !== 1) {
+                    throw Error("NotModified")
+                }
+            } catch {
+                throw Error("DbError")
+            }
+        })
+    } catch {
+        return false;
+    }
+    return true;
 }
 
 export const setsRouter = express.Router();

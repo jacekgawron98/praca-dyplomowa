@@ -36,7 +36,7 @@ export const ItemsScreen = (props: any) => {
 
     const onItemDeleteClicked = async (itemId?: string) => {
         if (!itemId) return;
-        const result = await showConfirmAlert("Delete item", "Are you sure you want to delete this item?");
+        const result = await showConfirmAlert("Delete item", "Are you sure you want to delete this item? It will be deleted from every set!");
         if (result && authContext.token) {
             itemsService.deleteItem(itemId, authContext.token).then(result => {
                 if (result) {
