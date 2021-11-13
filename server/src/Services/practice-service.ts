@@ -182,12 +182,12 @@ const delItem = async (itemId: string): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);
     const objId = new ObjectId(itemId);
     try {
-        // const result = await collection.deleteOne({ _id: objId});
-        // if (!result.acknowledged) {
-        //    return {
-        //        status: 400
-        //    }
-        // }
+        const result = await collection.deleteOne({ _id: objId});
+        if (!result.acknowledged) {
+            return {
+                status: 400
+            }
+        }
         await deleteItemInSets(itemId);
         return {
             status: 204
