@@ -34,3 +34,13 @@ interface SetTime {
     minute: number,
     isWeekly: boolean
 }
+
+interface Calendar {
+    monday: PracticeSet[],
+    tuesday: PracticeSet[],
+    wednesday: PracticeSet[],
+    thursday: PracticeSet[],
+    friday: PracticeSet[],
+    saturday: PracticeSet[],
+    sunday: PracticeSet[],
+}

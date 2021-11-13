@@ -87,3 +87,23 @@ export const deleteSet = async (setId: string, token: string) : Promise<boolean>
         return false
     }
 }
+
+export const getCalendar = async (ownerId: string, token: string) : Promise<Calendar|undefined> => {
+    const request = {
+        method: 'GET',
+        headers: defaultHeaders(token),
+    }
+    let result;
+    try {
+        result = await fetch(`${process.env.API_ADDRESS}/calendar/${ownerId}`, request)
+    } catch {
+        return undefined;
+    }
+
+    if (result.ok) {
+        const resultData: Calendar = await result.json();
+        return resultData? resultData : undefined;
+    } else {
+        return undefined
+    }
+}
