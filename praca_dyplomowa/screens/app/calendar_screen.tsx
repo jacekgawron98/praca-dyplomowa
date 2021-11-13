@@ -106,7 +106,7 @@ export const CalendarScreen = (props: any) => {
                     </Pressable>
                 </View>}
                 {!nextItem && <View>
-                    <Text style={[defaultStyles.standardText, styles.itemName]}>No items were scheduled</Text>
+                    <Text style={[defaultStyles.standardText, styles.itemName]}>No sets were scheduled</Text>
                 </View>}
             </View>
             <SectionList
