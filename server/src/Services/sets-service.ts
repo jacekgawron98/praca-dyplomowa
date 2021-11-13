@@ -184,15 +184,24 @@ const generateCalendar = async (ownerId: string) : Promise<SetResult> => {
     return {
         status: 200,
         calendar: {
-            monday: plannedSets.filter(set => set.plannedTime.day === "monday"),
-            tuesday: plannedSets.filter(set => set.plannedTime.day === "tuesday"),
-            wednesday: plannedSets.filter(set => set.plannedTime.day === "wednesday"),
-            thursday: plannedSets.filter(set => set.plannedTime.day === "thursday"),
-            friday: plannedSets.filter(set => set.plannedTime.day === "friday"),
-            saturday: plannedSets.filter(set => set.plannedTime.day === "saturday"),
-            sunday: plannedSets.filter(set => set.plannedTime.day === "sunday")
+            monday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "monday")),
+            tuesday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "tuesday")),
+            wednesday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "wednesday")),
+            thursday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "thursday")),
+            friday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "friday")),
+            saturday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "saturday")),
+            sunday: sortSetsByTime(plannedSets.filter(set => set.plannedTime.day === "sunday"))
         }
     }
+}
+
+const sortSetsByTime = (sets: PracticeSet[]) => {
+    const compareTime = (a: PracticeSet, b: PracticeSet) => {
+        const time1 = a.plannedTime.hour * 60 + a.plannedTime.minute;
+        const time2 = b.plannedTime.hour * 60 + b.plannedTime.minute;
+        return time1 >= time2? 1 : -1
+    }
+    return sets.sort(compareTime);
 }
 
 // Pewno da się zrobić lepiej

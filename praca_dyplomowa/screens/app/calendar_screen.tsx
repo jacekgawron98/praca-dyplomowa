@@ -90,25 +90,6 @@ export const CalendarScreen = (props: any) => {
 
     return (
         <View style={styles.container}>
-            <View style={{alignItems: "center", ...margin(10,0)}}>
-                <Text style={[defaultStyles.standardText, {fontSize: 32}]}>Next exercise</Text>
-                {(nextItem && nextItem.plannedTime) && <View><View style={styles.listItem}>
-                    <View style={[styles.content, styles.timer]}>
-                        <Text style={[defaultStyles.standardText, styles.itemName]}>{nextItem.plannedTime.hour}:{nextItem.plannedTime.minute}</Text>
-                    </View>
-                    <View style={styles.content}>
-                        <Text style={[defaultStyles.standardText, styles.itemName]}>{nextItem.name}</Text>
-                    </View>
-                    </View>
-                    <Pressable style={defaultStyles.standardButton} onPress={() => onStartClicked(nextItem)}>
-                        <Text style={[defaultStyles.standardText]}>Start now</Text>
-                        <MaterialIcons name="play-arrow" color={"#fff"} size={ICON_SIZE}/>
-                    </Pressable>
-                </View>}
-                {!nextItem && <View>
-                    <Text style={[defaultStyles.standardText, styles.itemName]}>No sets were scheduled</Text>
-                </View>}
-            </View>
             <SectionList
                 sections={listData}
                 keyExtractor={(item: PracticeSet, index: number) => item._id? item._id : index.toString()}
