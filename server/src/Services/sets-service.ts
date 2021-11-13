@@ -8,6 +8,7 @@ interface SetResult {
     status: number;
     set?: PracticeSet;
     sets?: PracticeSet[];
+    calendar?: object;
 }
 // GET api/set/:userId
 const getSets = (req: Request, res: Response<PracticeSet[]>) => {
@@ -65,6 +66,14 @@ const deleteSet = (req: Request, res: Response) => {
     const id: string = req.params.id;
     delSet(id).then( result => {
         res.status(result.status).send();
+    })
+}
+
+// GET api/calendar/:ownerId
+const getCalendar = (req: Request, res: Response) => {
+    const ownerId: string = req.params.userId;
+    generateCalendar(ownerId).then( result => {
+        res.status(result.status).send(result.calendar);
     })
 }
 
@@ -168,6 +177,24 @@ const delSet = async (itemId: string): Promise<SetResult> => {
     }
 }
 
+const generateCalendar = async (ownerId: string) : Promise<SetResult> => {
+    const collection = await getCollection<PracticeSet>(collectionName);
+    const sets = await collection.find({ownerId}).toArray();
+    const plannedSets = sets.filter(set => set.plannedTime);
+    return {
+        status: 200,
+        calendar: {
+            monday: plannedSets.filter(set => set.plannedTime.day === "monday"),
+            tuesday: plannedSets.filter(set => set.plannedTime.day === "tuesday"),
+            wednesday: plannedSets.filter(set => set.plannedTime.day === "wednesday"),
+            thursday: plannedSets.filter(set => set.plannedTime.day === "thursday"),
+            friday: plannedSets.filter(set => set.plannedTime.day === "friday"),
+            saturday: plannedSets.filter(set => set.plannedTime.day === "saturday"),
+            sunday: plannedSets.filter(set => set.plannedTime.day === "sunday")
+        }
+    }
+}
+
 // Pewno da się zrobić lepiej
 export const updateItemInSets = async (item: PracticeItem, ownerId: string) => {
     const collection = await getCollection<PracticeSet>(collectionName);
@@ -234,6 +261,7 @@ export const deleteItemInSets = async (itemId: string) => {
 }
 
 export const setsRouter = express.Router();
+setsRouter.get("/calendar/:userId",getCalendar);
 setsRouter.get("/set/:userId", getSets);
 setsRouter.get("/set/:userId/:id", getSet)
 setsRouter.post("/set", postSet);
