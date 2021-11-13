@@ -69,11 +69,19 @@ const deleteSet = (req: Request, res: Response) => {
     })
 }
 
-// GET api/calendar/:ownerId
+// GET api/calendar/:userId
 const getCalendar = (req: Request, res: Response) => {
     const ownerId: string = req.params.userId;
     generateCalendar(ownerId).then( result => {
         res.status(result.status).send(result.calendar);
+    })
+}
+
+// GET api/nextset/:userId
+const getNextSet = (req: Request, res: Response) => {
+    const ownerId: string = req.params.userId;
+    findNextSet(ownerId).then( result => {
+        res.status(result.status).send(result.set);
     })
 }
 
@@ -195,6 +203,30 @@ const generateCalendar = async (ownerId: string) : Promise<SetResult> => {
     }
 }
 
+const findNextSet = async (ownerId: string) : Promise<SetResult> => {
+    const collection = await getCollection<PracticeSet>(collectionName);
+    const sets = await collection.find({ownerId}).toArray();
+    const plannedSets = sets.filter(set => set.plannedTime);
+    if (plannedSets.length === 0) return {
+        status: 404
+    };
+    return {
+        status: 200,
+        set: plannedSets.sort(compareFullTime)[0]
+    }
+}
+
+const compareFullTime = (a: PracticeSet, b: PracticeSet) => {
+    const now = new Date(Date.now());
+    const dayNow = convertDayToNumber(now.toLocaleDateString("en-US",{weekday: "long"}));
+    const timeNow = now.getHours() * 60 + now.getMinutes();
+    const time1 = convertDayToMinutes(dayNow, convertDayToNumber(a.plannedTime.day)) * a.plannedTime.hour * 60 + a.plannedTime.minute;
+    const time2 = convertDayToMinutes(dayNow, convertDayToNumber(b.plannedTime.day)) * b.plannedTime.hour * 60 + b.plannedTime.minute;
+    const diffTime1 = Math.abs(timeNow - time1);
+    const diffTime2 = Math.abs(timeNow - time2);
+    return diffTime1 >= diffTime2? 1 : -1;
+}
+
 const sortSetsByTime = (sets: PracticeSet[]) => {
     const compareTime = (a: PracticeSet, b: PracticeSet) => {
         const time1 = a.plannedTime.hour * 60 + a.plannedTime.minute;
@@ -202,6 +234,60 @@ const sortSetsByTime = (sets: PracticeSet[]) => {
         return time1 >= time2? 1 : -1
     }
     return sets.sort(compareTime);
+}
+
+const convertDayToMinutes = (startDay: number, endDay: number) => {
+    const t = 24*3600;
+    switch (startDay) {
+        case 0: {
+            return endDay * t;
+        }
+        case 1: {
+            return endDay < startDay? (6 + endDay) * t : (endDay-1) * t;
+        }
+        case 2: {
+            return endDay < startDay? (5 + endDay) * t : (endDay-2) * t;
+        }
+        case 3: {
+            return endDay < startDay? (4 + endDay) * t : (endDay-3) * t;
+        }
+        case 4: {
+            return endDay < startDay? (3 + endDay) * t : (endDay-4) * t;
+        }
+        case 5: {
+            return endDay < startDay? (2 + endDay) * t : (endDay-5) * t;
+        }
+        case 6: {
+            return endDay < startDay? (1 + endDay) * t : (endDay-6) * t;
+        }
+    }
+}
+
+const convertDayToNumber = (day: string) => {
+    day = day.toLowerCase();
+    switch (day) {
+        case "monday": {
+            return 0;
+        }
+        case "tuesday": {
+            return 1;
+        }
+        case "wednesday": {
+            return 2;
+        }
+        case "thursday": {
+            return 3;
+        }
+        case "friday": {
+            return 4;
+        }
+        case "saturday": {
+            return 5;
+        }
+        case "sunday": {
+            return 6;
+        }
+    }
 }
 
 // Pewno da się zrobić lepiej
@@ -270,6 +356,7 @@ export const deleteItemInSets = async (itemId: string) => {
 }
 
 export const setsRouter = express.Router();
+setsRouter.get("/nextset/:userId",getNextSet);
 setsRouter.get("/calendar/:userId",getCalendar);
 setsRouter.get("/set/:userId", getSets);
 setsRouter.get("/set/:userId/:id", getSet)
