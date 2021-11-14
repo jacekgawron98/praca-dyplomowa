@@ -64,7 +64,6 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
                 }
                 if (authContext.account?._id && authContext.token) {
                     const value = await itemsService.addStat(newStat, itemId, authContext.account?._id,authContext.token);
-                    console.log(value);
                 } else {
                     throw Error("Not authorized");
                 }
