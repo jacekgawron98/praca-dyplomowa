@@ -31,6 +31,10 @@ export const CalendarScreen = (props: any) => {
                     if  (fetchedItems) {
                         setCalendar(fetchedItems);
                     }
+                    const fetchedNextItem = await setsService.getNextSet(authContext.account._id, authContext.token);
+                    if (fetchedNextItem) {
+                        setNextItem(fetchedNextItem);
+                    }
                 }catch (error: any) {
                     console.log(error);
                 }
@@ -90,6 +94,27 @@ export const CalendarScreen = (props: any) => {
 
     return (
         <View style={styles.container}>
+            <View style={{alignItems: "center", ...margin(10,0)}}>
+                <Text style={[defaultStyles.standardText, {fontSize: 32}]}>Next exercise</Text>
+                {(nextItem && nextItem.plannedTime) && <View style={styles.nextItem}>
+                    <View style={[styles.content, styles.timer, {alignItems: "center"}]}>
+                        <Text style={[defaultStyles.standardText]}>{nextItem.plannedTime.day.toUpperCase()}</Text>
+                        <Text style={[defaultStyles.standardText, styles.itemName]}>{nextItem.plannedTime.hour}:{nextItem.plannedTime.minute}</Text>
+                    </View>
+                    <View style={styles.content}>
+                        <Text style={[defaultStyles.standardText, styles.itemName]}>{nextItem.name}</Text>
+                    </View>
+                    <View style={styles.listItemButtons}>
+                        <Pressable onPress={() => onStartClicked(nextItem)}>
+                            <MaterialIcons name="play-arrow" color={"#fff"} size={ICON_SIZE}/>
+                        </Pressable>
+                    </View>
+                </View>
+                }
+                {!nextItem && <View>
+                    <Text style={[defaultStyles.standardText, styles.itemName]}>No items were scheduled</Text>
+                </View>}
+            </View>
             <SectionList
                 sections={listData}
                 keyExtractor={(item: PracticeSet, index: number) => item._id? item._id : index.toString()}
@@ -133,6 +158,17 @@ const styles = StyleSheet.create({
     listItem: {
         width: Dimensions.get('window').width * 0.9,
         flex:1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: BACKGROUND_DARK,
+        borderRadius: 15,
+        ...padding(10),
+        ...margin(10,5,0)
+    },
+
+    nextItem: {
+        width: Dimensions.get('window').width * 0.9,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
