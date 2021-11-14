@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Dimensions, L
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_DARK, BACKGROUND_LIGHT, defaultStyles, LIGHT_COLOR, MIDDLE_COLOR, PLACEHOLDER_COLOR } from "../../common/default_styles";
 import { ButtonHeader } from "../../components/button_header";
+import { ItemFilters } from "../../components/item_filters";
 import { ListItem } from "../../components/list_items";
 import { AuthContext } from "../../contexts/auth-context";
 import { margin, padding } from "../../helpers/style_helper";
@@ -22,6 +23,9 @@ export const SetFormScreen = ({ route, navigation }: any) => {
     const [dateError, setDateError] = useState<boolean>(false);
     const [isScheduled, setIsScheduled] = useState<boolean>(false);
     const [lastSchedule, setLastSchedule] = useState<SetTime|undefined>(undefined);
+
+    const [filteredItems, setFilteredItems] = useState<PracticeItem[]>([]);
+    const [textFilter, setTextFilter] = useState<string>("");
     
     const [hours, setHours] = useState<string>("0");
     const [minutes, setMinutes] = useState<string>("0");
@@ -63,6 +67,7 @@ export const SetFormScreen = ({ route, navigation }: any) => {
                 try {
                     const fetchedItems = await itemsService.getItems(authContext.account?._id, authContext.token);
                     setItems(fetchedItems);
+                    setFilteredItems(fetchedItems);
                 }catch (error: any) {
                     console.log(error);
                 }
@@ -70,6 +75,10 @@ export const SetFormScreen = ({ route, navigation }: any) => {
         }
         getItems();
     },[isFocused])
+
+    useEffect(() => {
+        applyFilters(textFilter);
+    }, [textFilter])
 
     const onConfirmClicked = () => {
         if (validateForm() && authContext.token) {
@@ -174,6 +183,18 @@ export const SetFormScreen = ({ route, navigation }: any) => {
         </View>
     )
 
+    const applyFilters = (text?: string) => {
+        console.log("enetered")
+        let newFilters = items;
+        if (textFilter) {
+            newFilters = items.filter(item => 
+                item.name.toLowerCase().indexOf(textFilter.toLowerCase()) === 0    
+            )
+        }
+
+        setFilteredItems(newFilters);
+    }
+
     return (
         <View style={styles.container}>
             <ButtonHeader navigation={navigation}
@@ -238,12 +259,19 @@ export const SetFormScreen = ({ route, navigation }: any) => {
                         return addedItem(item,index);
                     })}
                 </View>
-                <View style={{flex:1, paddingBottom: 25}}>
+                <View style={{flex:1, width: Dimensions.get("window").width, ...padding(0,10,25),}}>
                     <Text style={styles.sectionTitle}>Full catalogue</Text>
-                    {items.length === 0 && <Text style={defaultStyles.standardText}>
-                        You don't have any items
-                    </Text>}
-                    {items.map(item => {
+                    <TextInput value={textFilter} 
+                        onChangeText={(text: string) => {setTextFilter(text)}}
+                        placeholder="Filter by item name"
+                        placeholderTextColor={PLACEHOLDER_COLOR}
+                        style={defaultStyles.textInput}/>
+                    {(filteredItems.length === 0 ) && <View style={{alignItems:"center", ...padding(5)}}>
+                        <Text style={defaultStyles.standardText}>
+                            You don't have any items
+                        </Text>
+                    </View>}
+                    {filteredItems.map(item => {
                         return fullListItem(item);
                     })}
                 </View>

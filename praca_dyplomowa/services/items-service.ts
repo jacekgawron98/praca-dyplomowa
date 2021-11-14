@@ -112,3 +112,26 @@ export const deleteItem = async (itemId: string, token: string) : Promise<boolea
         return false
     }
 }
+
+export const getTags = async (ownerId: string, token: string) : Promise<string[]> => {
+    const request ={
+        method: 'GET',
+        headers: defaultHeaders(token),
+    }
+    let result;
+    try {
+        result = await fetch(`${process.env.API_ADDRESS}/item/${ownerId}/tags`, request)
+    } catch {
+        throw 404;
+    }
+
+    if (result.ok) {
+        const resultData: string[] = await result.json();
+        if (resultData) {
+            return resultData;
+        }
+    } else {
+        throw result.status;
+    }
+    return [];
+}
