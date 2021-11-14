@@ -135,3 +135,23 @@ export const getTags = async (ownerId: string, token: string) : Promise<string[]
     }
     return [];
 }
+
+export const addStat = async (stat: Stat, itemId: string, userId: string, token: string) : Promise<boolean> => {
+    const request ={
+        method: 'PUT',
+        headers: defaultHeaders(token),
+        body: JSON.stringify(stat)
+    }
+    let result;
+    try {
+        console.log(`update stat: ${itemId}`)
+        result = await fetch(`${process.env.API_ADDRESS}/stats/${userId}/${itemId}`, request)
+    } catch {
+        throw 408;
+    }
+    if (result.ok) {
+        return true;
+    } else {
+        return false;
+    }
+}

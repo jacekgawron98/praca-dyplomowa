@@ -44,3 +44,9 @@ interface Calendar {
     saturday: PracticeSet[],
     sunday: PracticeSet[],
 }
+
+interface Stat {
+    date: number;
+    finishTime: number;
+    value: number;
+}

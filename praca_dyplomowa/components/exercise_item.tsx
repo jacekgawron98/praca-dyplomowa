@@ -15,7 +15,7 @@ interface ListSetProps {
     isActive: boolean
     isLast?: boolean
     navigation: any
-    onNextClicked: (statValue?: string) => void
+    onNextClicked: (itemId:string, statValue?: string) => void
     onRepeatClicked?: (event: GestureResponderEvent) => void
 
 }
@@ -46,7 +46,7 @@ export const ExerciseItem = (props: ListSetProps) => {
                 timer = setInterval(() => {manageTimer(1)},1000);
             }
         }
-        return timer? () => {clearInterval(timer); console.log("timer clear")} : () => clearInterval();
+        return timer? () => {clearInterval(timer);} : () => clearInterval();
     })
 
     const manageTimer = (interval: number) => {
@@ -130,7 +130,7 @@ export const ExerciseItem = (props: ListSetProps) => {
                             style={[defaultStyles.standardButton,{...margin(10)}]}>
                             <Text style={defaultStyles.buttonText}>Repeat</Text>
                         </Pressable>
-                        <Pressable onPress={() => props.onNextClicked(props.item.statisticName? statValue : undefined)}
+                        <Pressable onPress={() => props.onNextClicked(props.item._id!,props.item.statisticName? statValue : undefined)}
                             style={[defaultStyles.standardButton,{...margin(10)}]}>
                             <Text style={defaultStyles.buttonText}>{props.isLast? "Finish" : "Next"}</Text>
                         </Pressable>
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     },
 
     content: {
-        flexShrink: 3
+        flexShrink: 2
     },
 
     activeContent: {

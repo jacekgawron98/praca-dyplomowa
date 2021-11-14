@@ -70,6 +70,23 @@ const addItemsValidation = async (db: mongodb.Db) => {
                         ownerId: {
                             bsonType: "string"
                         },
+                        stats: {
+                            bsonType: "array",
+                            items: {
+                                bsonType: "object",
+                                properties: {
+                                    date: {
+                                        bsonType: "number"
+                                    },
+                                    finishTime: {
+                                        bsonType: "number"
+                                    },
+                                    value: {
+                                        bsonType: "number"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -130,6 +147,23 @@ const addSetsValidation = async (db: mongodb.Db) => {
                                     ownerId: {
                                         bsonType: "string"
                                     },
+                                    stats: {
+                                        bsonType: "array",
+                                        items: {
+                                            bsonType: "object",
+                                            properties: {
+                                                date: {
+                                                    bsonType: "number"
+                                                },
+                                                finishTime: {
+                                                    bsonType: "number"
+                                                },
+                                                value: {
+                                                    bsonType: "number"
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         },

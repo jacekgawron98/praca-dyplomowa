@@ -1,13 +1,15 @@
 import { useIsFocused } from "@react-navigation/core";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Text, FlatList, ListRenderItemInfo, Pressable, Dimensions } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_LIGHT, defaultStyles } from "../../common/default_styles";
 import { ButtonHeader } from "../../components/button_header";
 import { ExerciseItem } from "../../components/exercise_item";
+import { AuthContext } from "../../contexts/auth-context";
 import { showInfoAlert } from "../../helpers/alerts";
 import { padding } from "../../helpers/style_helper";
 import { getTimeString } from "../../helpers/types_helper";
+import * as itemsService from "../../services/items-service";
 
 interface ItemInfo {
     item: PracticeItem,
@@ -19,6 +21,7 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
     const [buttonState, setButtonState] = useState<string>("Start");
     const [activeIndex, setActiveIndex] = useState<number>(-1);
     const [startTime, setStartTime] = useState<number>(0);
+    const authContext = useContext(AuthContext);
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -49,13 +52,27 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
         setButtonState("Start");
     }
 
-    const onNextClicked = (statValue?: string) => {
+    const onNextClicked = async (itemId: string, statValue?: string) => {
+        const time = (Date.now() - startTime);
         if (statValue) {
-            console.log(statValue);
-            // TO DO zapisywanie statystyki
+            try {
+                const val = parseFloat(statValue);
+                const newStat: Stat = {
+                    date: Date.now(),
+                    finishTime: time,
+                    value: val
+                }
+                if (authContext.account?._id && authContext.token) {
+                    const value = await itemsService.addStat(newStat, itemId, authContext.account?._id,authContext.token);
+                    console.log(value);
+                } else {
+                    throw Error("Not authorized");
+                }
+            } catch {
+                console.log("update error")
+            }
         }
         if (activeIndex + 1 === set.items.length) {
-            const time = (Date.now() - startTime);
             showInfoAlert("Set finished", `You finished set in ${getTimeString(time/1000)}`);
             // TO DO zapisywanie w historii + wyświetlenie podsumowania
         }

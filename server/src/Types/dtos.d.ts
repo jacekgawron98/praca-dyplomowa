@@ -28,6 +28,7 @@ interface PracticeItem {
     videoLink?: string,
     tags?: string[],
     ownerId: string,
+    stats: Stat[],
 }
 
 interface PracticeSet {
@@ -43,4 +44,10 @@ interface SetTime {
     hour: number,
     minute: number,
     isWeekly: boolean
+}
+
+interface Stat {
+    date: number;
+    finishTime: number;
+    value: number;
 }

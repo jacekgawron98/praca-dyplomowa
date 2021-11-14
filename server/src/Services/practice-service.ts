@@ -97,6 +97,20 @@ const fetchItems = async (ownerId: string): Promise<ItemResult> => {
     }
 }
 
+// PUT api/item/:userId/:id
+const putStats = (req: Request, res: Response) => {
+    const itemId = req.params.id;
+    const ownerId= req.params.userId;
+    const stat = req.body;
+    if (!itemId || !ownerId) {
+        res.status(400).send();
+        return;
+    }
+    addStats(itemId, ownerId, stat).then( result => {
+        res.status(result.status).send(result.item);
+    })
+}
+
 const fetchItem = async (itemId: string, ownerId: string): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);
     const objId = new ObjectId(itemId);
@@ -220,11 +234,52 @@ const fetchTags = async (ownerId: string): Promise<ItemResult> => {
     }
 }
 
+const addStats = async (itemId: string, ownerId: string, newStat: Stat): Promise<ItemResult> => {
+    const collection = await getCollection<PracticeItem>(collectionName);
+    const originalResult = await fetchItem(itemId, ownerId);
+    if (!originalResult.item) {
+        return {
+            status: originalResult.status
+        }
+    }
+    const originalItem = originalResult.item;
+    const filter = {
+        _id: new ObjectId(itemId),
+        ownerId
+    }
+
+    const originalStats = originalItem.stats? originalItem.stats : []
+
+    const set = {
+        stats: [...originalStats,newStat]
+    }
+
+    const updateData = {
+        $set: set
+    }
+    try {
+        const result = await collection.updateOne(filter, updateData);
+        if (result.modifiedCount !== 1) {
+            return {
+                status: 404
+            }
+        }
+        return {
+            status: 204,
+        }
+    } catch {
+        return {
+            status: 400
+        }
+    }
+}
+
 export const practiceRouter = express.Router();
 practiceRouter.get("/item/:userId", getItems);
 practiceRouter.get("/item/:userId/tags", getItemsTags);
 practiceRouter.get("/item/:userId/:id", getItem)
 practiceRouter.post("/item", postItem);
 practiceRouter.put("/item/:userId/:id", putItem);
+practiceRouter.put("/stats/:userId/:id",putStats);
 practiceRouter.delete("/item/:id", deleteItem);
 
