@@ -9,7 +9,7 @@ import * as itemsService from "../services/items-service";
 interface FiltersProps {
     userToken?: string;
     ownerId?: string;
-    onTagsChanged: (tags: string[]) => void;
+    onTagsChanged?: (tags: string[]) => void;
     onTextChanged: (text: string) => void;
     onSortDesc: () => void;
     onSortAsc: () => void;
@@ -57,7 +57,9 @@ export const ItemFilters = (props: FiltersProps) => {
     },[isFocused])
 
     useEffect(() => {
-        props.onTagsChanged(value);
+        if (props.onTagsChanged) {
+            props.onTagsChanged(value);
+        }
     },[value])
 
     useEffect(() => {
@@ -105,7 +107,7 @@ export const ItemFilters = (props: FiltersProps) => {
                     />
                 </View>
             </View>
-                <DropDownPicker 
+            {props.onTagsChanged && <DropDownPicker 
                     theme="DARK"
                     zIndex={900}
                     multiple={true}
@@ -122,7 +124,7 @@ export const ItemFilters = (props: FiltersProps) => {
                     style={[styles.mainDropDownStyle, {width: Dimensions.get("window").width * 0.9}]}
                     dropDownContainerStyle={styles.dropdownContainerStyle}
                     textStyle={styles.dropdownTextStyle}
-                />
+                />}
         </View>
     )
 }

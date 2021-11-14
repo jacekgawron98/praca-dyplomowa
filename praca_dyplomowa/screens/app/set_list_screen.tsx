@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ListRenderItemInfo, FlatList } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { BACKGROUND_LIGHT, defaultStyles } from "../../common/default_styles";
+import { ItemFilters } from "../../components/item_filters";
 import { ListSet } from "../../components/list_sets";
 import { AuthContext } from "../../contexts/auth-context";
 import { showConfirmAlert, showInfoAlert } from "../../helpers/alerts";
@@ -12,6 +13,9 @@ const ICON_SIZE = 40
 
 export const SetListScreen = (props: any) => {
     const [sets, setSets] = useState<PracticeSet[]>([]);
+    const [filteredSets, setFilteredSets] = useState<PracticeSet[]>([]);
+    const [textFilter, setTextFilter] = useState<string>("");
+
     const authContext = useContext(AuthContext);
     const isFocused = useIsFocused();
 
@@ -21,6 +25,7 @@ export const SetListScreen = (props: any) => {
                 try {
                     const fetchedItems = await setsService.getSets(authContext.account?._id, authContext.token);
                     setSets(fetchedItems);
+                    setFilteredSets(fetchedItems);
                 }catch (error: any) {
                     console.log(error);
                 }
@@ -28,6 +33,44 @@ export const SetListScreen = (props: any) => {
         }
         getSets();
     },[isFocused])
+
+    useEffect(() => {
+        applyFilters(textFilter);
+    }, [textFilter])
+
+    const onTextChanged = async (text: string) => {
+        setTextFilter(text);
+    }
+
+    const applyFilters = (text?: string) => {
+        console.log("enetered")
+        let newFilters = sets;
+        if (textFilter) {
+            newFilters = sets.filter(set => 
+                set.name.toLowerCase().indexOf(textFilter.toLowerCase()) === 0    
+            )
+        }
+        setFilteredSets(newFilters);
+    }
+
+    const onSortAsc = () => {
+        const newFiltered = filteredSets.sort((a: PracticeItem, b: PracticeItem) => {
+            return -(a.name.localeCompare(b.name));
+        })
+        setFilteredSets(newFiltered);
+    }
+
+    const onSortDesc = () => {
+        const newFiltered = filteredSets.sort((a: PracticeItem, b: PracticeItem) => {
+            return a.name.localeCompare(b.name);
+        })
+        setFilteredSets(newFiltered);
+    }
+
+    const onNoSort = () => {
+        //Nie działa! Poprawić!
+        applyFilters(textFilter);
+    }
 
     const onAddClicked = () => {
         props.navigation.navigate("SetFormScreen",{})
@@ -61,9 +104,15 @@ export const SetListScreen = (props: any) => {
 
     return (
         <View style={styles.container}>
-            {sets.length === 0 && <Text style={defaultStyles.standardText}>You dont have any sets</Text>}
-            {sets && <FlatList
-                data={sets}
+            <ItemFilters onSortAsc={onSortAsc} 
+                onSortDesc={onSortDesc}
+                onNoSort={onNoSort}
+                onTextChanged={onTextChanged}
+                ownerId={authContext.account?._id}
+                userToken={authContext.token}/>
+            {filteredSets.length === 0 && <Text style={defaultStyles.standardText}>You dont have any sets</Text>}
+            {(sets && filteredSets) && <FlatList
+                data={filteredSets}
                 renderItem={listSet}
                 keyExtractor={set => set._id? set._id : set.name + Date.now()}
             />}
