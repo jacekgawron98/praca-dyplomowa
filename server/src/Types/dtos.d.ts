@@ -51,3 +51,10 @@ interface Stat {
     finishTime: number;
     value: number;
 }
+
+interface History {
+    _id?: import("mongodb").ObjectId,
+    date: number;
+    finishTime: number;
+    set: PracticeSet;
+}
