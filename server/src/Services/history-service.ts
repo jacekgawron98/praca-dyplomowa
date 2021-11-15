@@ -65,4 +65,4 @@ const addHistory = async (history: History): Promise<SetResult> => {
 
 export const historyRouter = express.Router();
 historyRouter.get("/history/:userId",getHistory);
-historyRouter.post("/set", postHistory);
+historyRouter.post("/history", postHistory);

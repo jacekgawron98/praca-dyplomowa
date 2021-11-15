@@ -127,3 +127,53 @@ export const getNextSet = async (ownerId: string, token: string) : Promise<Pract
         return undefined
     }
 }
+
+export const getHistory = async (ownerId: string, token: string) : Promise<PracticeHistory[]> => {
+    let history: PracticeHistory[] = [];
+    const request ={
+        method: 'GET',
+        headers: defaultHeaders(token),
+    }
+    let result;
+    try {
+        console.log(process.env.API_ADDRESS)
+        result = await fetch(`${process.env.API_ADDRESS}/history/${ownerId}`, request)
+    } catch {
+        throw 408;
+    }
+
+    if (result.ok) {
+        const resultData: PracticeHistory[] = await result.json();
+        if (resultData) {
+            history = resultData;
+        }
+    } else {
+        throw result.status;
+    }
+    return history;
+}
+
+export const addHistory = async (history: PracticeHistory, token: string) : Promise<PracticeHistory|undefined> => {
+    const request ={
+        method: 'POST',
+        headers: defaultHeaders(token),
+        body: JSON.stringify(history)
+    }
+    let result;
+    try {
+        console.log("add history")
+        result = await fetch(`${process.env.API_ADDRESS}/history`, request)
+    } catch {
+        throw 408;
+    }
+    if (result.ok) {
+        const resultData: PracticeHistory = await result.json();
+        if (resultData) {
+            history = resultData;
+        }
+    } else {
+        console.log(result.status);
+        return undefined
+    }
+    return history;
+}

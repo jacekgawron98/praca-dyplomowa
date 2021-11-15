@@ -10,6 +10,7 @@ import { showInfoAlert } from "../../helpers/alerts";
 import { padding } from "../../helpers/style_helper";
 import { getTimeString } from "../../helpers/types_helper";
 import * as itemsService from "../../services/items-service";
+import * as setsService from "../../services/sets-service";
 
 interface ItemInfo {
     item: PracticeItem,
@@ -73,7 +74,15 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
         }
         if (activeIndex + 1 === set.items.length) {
             showInfoAlert("Set finished", `You finished set in ${getTimeString(time/1000)}`);
-            // TO DO zapisywanie w historii + wyświetlenie podsumowania
+            const history: PracticeHistory = {
+                date: Date.now(),
+                finishTime: time,
+                set: set
+            }
+            if (authContext.token) {
+                const result = await setsService.addHistory(history,authContext.token);
+                console.log(result);
+            }
         }
         setActiveIndex(activeIndex + 1)
     }

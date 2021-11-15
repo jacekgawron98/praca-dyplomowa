@@ -51,3 +51,10 @@ interface Stat {
     finishTime: number;
     value: number;
 }
+
+interface PracticeHistory {
+    _id?: string,
+    date: number;
+    finishTime: number;
+    set: PracticeSet;
+}
