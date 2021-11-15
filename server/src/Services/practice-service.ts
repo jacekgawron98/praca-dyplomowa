@@ -32,7 +32,7 @@ const getItems = (req: Request, res: Response<PracticeItem[]>) => {
         res.status(400).send();
         return;
     }
-    fetchItems(ownerId).then( result => {
+    fetchItems(ownerId, req.query.stats? true : false).then( result => {
         res.status(result.status).send(result.items);
     })
 }
@@ -87,16 +87,6 @@ const deleteItem = (req: Request, res: Response) => {
     })
 }
 
-// helper functions
-const fetchItems = async (ownerId: string): Promise<ItemResult> => {
-    const collection = await getCollection<PracticeItem>(collectionName);
-    const items = await collection.find({ownerId}).toArray();
-    return {
-        status: 200,
-        items
-    }
-}
-
 // PUT api/item/:userId/:id
 const putStats = (req: Request, res: Response) => {
     const itemId = req.params.id;
@@ -110,6 +100,20 @@ const putStats = (req: Request, res: Response) => {
         res.status(result.status).send(result.item);
     })
 }
+
+// helper functions
+const fetchItems = async (ownerId: string, stats? : boolean): Promise<ItemResult> => {
+    const collection = await getCollection<PracticeItem>(collectionName);
+    let items = await collection.find({ownerId}).toArray();
+    if (stats) {
+        items = items.filter(item => item.statisticName);
+    }
+    return {
+        status: 200,
+        items
+    }
+}
+
 
 const fetchItem = async (itemId: string, ownerId: string): Promise<ItemResult> => {
     const collection = await getCollection<PracticeItem>(collectionName);

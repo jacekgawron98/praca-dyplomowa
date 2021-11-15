@@ -1,15 +1,19 @@
 import { defaultHeaders } from "../helpers/request_headers";
 
-export const getItems = async (userId: string, token: string) : Promise<PracticeItem[]> => {
+export const getItems = async (userId: string, token: string, onlyStats?: boolean) : Promise<PracticeItem[]> => {
     let items: PracticeItem[] = [];
     const request ={
         method: 'GET',
         headers: defaultHeaders(token),
     }
     let result;
+    let query = "";
+    if (onlyStats) {
+        query = "?stats=1";
+    }
     try {
         console.log(process.env.API_ADDRESS)
-        result = await fetch(`${process.env.API_ADDRESS}/item/${userId}`, request)
+        result = await fetch(`${process.env.API_ADDRESS}/item/${userId}${query}`, request)
     } catch {
         throw 408;
     }

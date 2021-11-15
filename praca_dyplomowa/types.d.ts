@@ -18,6 +18,7 @@ interface PracticeItem {
     videoLink?: string,
     tags?: string[],
     ownerId: string,
+    stats?: Stat[]
 }
 
 interface PracticeSet {
