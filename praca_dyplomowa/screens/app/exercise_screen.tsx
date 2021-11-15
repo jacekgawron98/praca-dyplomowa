@@ -74,12 +74,13 @@ export const ExerciseScreen = ({ route, navigation }: any) => {
         }
         if (activeIndex + 1 === set.items.length) {
             showInfoAlert("Set finished", `You finished set in ${getTimeString(time/1000)}`);
-            const history: PracticeHistory = {
-                date: Date.now(),
-                finishTime: time,
-                set: set
-            }
-            if (authContext.token) {
+            if (authContext.token && authContext.account?._id) {
+                const history: PracticeHistory = {
+                    date: Date.now(),
+                    ownerId: authContext.account?._id,
+                    finishTime: time,
+                    set: set
+                }
                 const result = await setsService.addHistory(history,authContext.token);
                 console.log(result);
             }

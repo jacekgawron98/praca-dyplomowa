@@ -148,6 +148,7 @@ export const getHistory = async (ownerId: string, token: string) : Promise<Pract
             history = resultData;
         }
     } else {
+        console.log(result.status);
         throw result.status;
     }
     return history;
@@ -172,7 +173,6 @@ export const addHistory = async (history: PracticeHistory, token: string) : Prom
             history = resultData;
         }
     } else {
-        console.log(result.status);
         return undefined
     }
     return history;

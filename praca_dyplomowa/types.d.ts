@@ -53,7 +53,8 @@ interface Stat {
 }
 
 interface PracticeHistory {
-    _id?: string,
+    _id?: string;
+    ownerId: string;
     date: number;
     finishTime: number;
     set: PracticeSet;

@@ -54,6 +54,7 @@ interface Stat {
 
 interface History {
     _id?: import("mongodb").ObjectId,
+    ownerId: string;
     date: number;
     finishTime: number;
     set: PracticeSet;
